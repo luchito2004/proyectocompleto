@@ -1,194 +1,152 @@
 const express = require('express');
-const cors = require('cors');
 const sql = require('mssql');
 const path = require('path');
+const session = require('express-session');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configuración de la base de datos
 const config = {
-    user: 'cristofer',
-    password: '2k20Cris1a2s3d4f',
-    server: 'negocio.database.windows.net',
-    database: 'Negocio',
-    options: {
-        encrypt: true,
-        trustServerCertificate: false
-    },
+    user: 'adminlu',
+    password: 'Lucho12345',
+    server: 'luchodb.database.windows.net',
+    database: 'luchodb',
+    options: { trustServerCertificate: true }
 };
 
-app.use(cors());
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
 
-// Ruta para la raíz
+// Inicializar carrito en la sesión
+app.use((req, res, next) => {
+    if (!req.session.cart) {
+        req.session.cart = [];
+    }
+    next();
+});
+
+// Ruta para servir el archivo HTML principal (login)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html')); // Asegúrate de que 'index.html' esté en la misma carpeta que app.js
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Conexión a la base de datos
-sql.connect(config).then(pool => {
-    console.log('Conectado a la base de datos');
+// Ruta para la pantalla principal
+app.get('/main', (req, res) => {
+    if (req.session.loggedIn) {
+        res.sendFile(path.join(__dirname, 'index.html')); // La misma página con productos
+    } else {
+        res.redirect('/');
+    }
+});
 
-    // Ruta para obtener todos los productos
-    app.get('/api/productos', async (req, res) => {
-        try {
-            const result = await pool.request().query('SELECT * FROM productos');
-            res.json(result.recordset);
-        } catch (error) {
-            console.error('Error al obtener productos:', error);
-            res.status(500).send('Error al obtener productos');
-        }
-    });
+// Ruta para ver el carrito
+app.get('/cart', (req, res) => {
+    if (req.session.loggedIn) {
+        res.sendFile(path.join(__dirname, 'cart.html')); // Cargar la página del carrito
+    } else {
+        res.redirect('/');
+    }
+});
 
-    // Ruta para crear un nuevo producto
-    app.post('/api/productos', async (req, res) => {
-        const { nombre, precio, stock, categoria } = req.body;
-        try {
+// Ruta para agregar productos al carrito
+app.post('/add-to-cart', (req, res) => {
+    const { item, price } = req.body;
+    req.session.cart.push({ item, price, quantity: 1 }); // Inicializamos la cantidad en 1
+    res.json({ message: 'Producto agregado al carrito' });
+});
+
+// Ruta para obtener los items del carrito
+app.get('/cart-items', (req, res) => {
+    res.json({ items: req.session.cart });
+});
+
+// Ruta para actualizar la cantidad de un producto en el carrito
+app.post('/update-cart', (req, res) => {
+    const { index, quantity } = req.body;
+    if (req.session.cart[index]) {
+        req.session.cart[index].quantity = quantity; // Actualiza la cantidad
+        res.json({ message: 'Cantidad actualizada' });
+    } else {
+        res.status(404).json({ message: 'Producto no encontrado en el carrito' });
+    }
+});
+
+// Ruta para eliminar un producto del carrito
+app.post('/remove-from-cart', (req, res) => {
+    const { index } = req.body;
+    if (index >= 0 && index < req.session.cart.length) {
+        req.session.cart.splice(index, 1); // Eliminar el producto
+        res.json({ message: 'Producto eliminado del carrito' });
+    } else {
+        res.status(404).json({ message: 'Producto no encontrado en el carrito' });
+    }
+});
+
+// Ruta para finalizar la compra
+app.post('/finalize-purchase', async (req, res) => {
+    const cart = req.session.cart;
+    try {
+        const pool = await sql.connect(config);
+        for (const item of cart) {
             await pool.request()
-                .input('nombre', sql.NVarChar, nombre)
-                .input('precio', sql.Decimal(10, 2), precio)
-                .input('stock', sql.Int, stock)
-                .input('categoria', sql.NVarChar, categoria)
-                .query('INSERT INTO productos (nombre, precio, stock, categoria) VALUES (@nombre, @precio, @stock, @categoria)');
-            res.status(201).send('Producto creado');
-        } catch (error) {
-            console.error('Error al crear producto:', error);
-            res.status(500).send('Error al crear producto');
+                .input('item', sql.VarChar, item.item)
+                .input('price', sql.Int, item.price)
+                .input('quantity', sql.Int, item.quantity) // Guardar cantidad en la base de datos
+                .query('INSERT INTO ventas (item, price, quantity) VALUES (@item, @price, @quantity)');
         }
-    });
-
-    // Ruta para actualizar un producto
-    app.put('/api/productos/:id', async (req, res) => {
-        const { id } = req.params;
-        const { nombre, precio, stock, categoria } = req.body;
-        try {
-            await pool.request()
-                .input('id', sql.Int, id)
-                .input('nombre', sql.NVarChar, nombre)
-                .input('precio', sql.Decimal(10, 2), precio)
-                .input('stock', sql.Int, stock)
-                .input('categoria', sql.NVarChar, categoria)
-                .query('UPDATE productos SET nombre = @nombre, precio = @precio, stock = @stock, categoria = @categoria WHERE id_producto = @id');
-            res.send('Producto actualizado');
-        } catch (error) {
-            console.error('Error al actualizar producto:', error);
-            res.status(500).send('Error al actualizar producto');
-        }
-    });
-
-    // Ruta para eliminar un producto
-    app.delete('/api/productos/:id', async (req, res) => {
-        const idProducto = req.params.id;
-        const transaction = new sql.Transaction(pool);
-    
-        try {
-            await transaction.begin();
-    
-            // Eliminar registros de detalle_ventas
-            await transaction.request()
-                .input('id_producto', sql.Int, idProducto)
-                .query('DELETE FROM detalle_ventas WHERE id_producto = @id_producto');
-    
-            // Eliminar el producto
-            await transaction.request()
-                .input('id_producto', sql.Int, idProducto)
-                .query('DELETE FROM productos WHERE id_producto = @id_producto');
-    
-            await transaction.commit();
-            res.status(200).json({ message: 'Producto eliminado exitosamente' });
-        } catch (error) {
-            await transaction.rollback();
-            console.error('Error al eliminar producto:', error);
-            res.status(500).json({ message: 'Error al eliminar producto' });
-        }
-    });
-    
-
-    // Rutas para ventas
-
-// Ruta para obtener todas las ventas
-app.get('/api/ventas', async (req, res) => {
-    try {
-        const result = await pool.request().query('SELECT * FROM ventas');
-        res.json(result.recordset);
-    } catch (error) {
-        console.error('Error al obtener ventas:', error);
-        res.status(500).send('Error al obtener ventas');
+        req.session.cart = []; // Vaciar el carrito después de la compra
+        res.json({ message: 'Compra exitosa' });
+    } catch (err) {
+        console.error('Error en la compra:', err);
+        res.status(500).json({ message: 'Error al realizar la compra' });
     }
 });
 
-// Ruta para crear una nueva venta
-app.post('/api/ventas', async (req, res) => {
-    const { id_cliente, total } = req.body;
+// Registro de usuario
+app.post('/register', async (req, res) => {
+    const { email, password } = req.body;
     try {
+        await sql.connect(config);
+        await sql.request()
+            .input('email', sql.VarChar, email)
+            .input('password', sql.VarChar, password)
+            .query('INSERT INTO usuarios (email, password) VALUES (@email, @password)');
+        res.status(201).send('Usuario registrado exitosamente');
+    } catch (err) {
+        console.error('Error al registrar:', err);
+        res.status(500).send('Error al registrar usuario');
+    }
+});
+
+// Login de usuario
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const pool = await sql.connect(config);
         const result = await pool.request()
-            .input('id_cliente', sql.Int, id_cliente)
-            .input('total', sql.Decimal(10, 2), total)
-            .query('INSERT INTO ventas (id_cliente, total) VALUES (@id_cliente, @total); SELECT SCOPE_IDENTITY() AS id_venta');
-
-        const id_venta = result.recordset[0].id_venta;
-        res.status(201).json({ id_venta });
-    } catch (error) {
-        console.error('Error al crear venta:', error);  
-        res.status(500).send('Error al crear venta');
+            .input('email', sql.VarChar, email)
+            .input('password', sql.VarChar, password)
+            .query('SELECT * FROM usuarios WHERE email = @email AND password = @password');
+        if (result.recordset.length > 0) {
+            req.session.loggedIn = true; // Establece la sesión como iniciada
+            res.send('Login exitoso');
+        } else {
+            res.send('Correo o contraseña incorrectos');
+        }
+    } catch (err) {
+        console.error('Error en login:', err);
+        res.status(500).send('Error al iniciar sesión');
     }
 });
 
-// Ruta para agregar un detalle de venta
-app.post('/api/detalle_ventas', async (req, res) => {
-    const { id_venta, id_producto, cantidad, precio_unitario } = req.body;
-    try {
-        await pool.request()
-            .input('id_venta', sql.Int, id_venta)
-            .input('id_producto', sql.Int, id_producto)
-            .input('cantidad', sql.Int, cantidad)
-            .input('precio_unitario', sql.Decimal(10, 2), precio_unitario)
-            .query('INSERT INTO detalle_ventas (id_venta, id_producto, cantidad, precio_unitario) VALUES (@id_venta, @id_producto, @cantidad, @precio_unitario)');
-        res.status(201).send('Detalle de venta agregado');
-    } catch (error) {
-        console.error('Error al agregar detalle de venta:', error);
-        res.status(500).send('Error al agregar detalle de venta');
-    }
-});
-
-// Ruta para obtener los detalles de una venta
-app.get('/api/detalle_ventas/:id_venta', async (req, res) => {
-    const { id_venta } = req.params;
-    try {
-        const result = await pool.request()
-            .input('id_venta', sql.Int, id_venta)
-            .query('SELECT dv.*, p.nombre FROM detalle_ventas dv JOIN productos p ON dv.id_producto = p.id_producto WHERE dv.id_venta = @id_venta');
-        res.json(result.recordset);
-    } catch (error) {
-        console.error('Error al obtener detalles de la venta:', error);
-        res.status(500).send('Error al obtener detalles de la venta');
-    }
-});
-
-    // Ruta para actualizar un producto
-app.put('/api/productos/:id', async (req, res) => {
-    const { id } = req.params;
-    const { nombre, precio, stock, categoria } = req.body;
-    try {
-        await pool.request()
-            .input('id', sql.Int, id)
-            .input('nombre', sql.NVarChar, nombre)
-            .input('precio', sql.Decimal(10, 2), precio)
-            .input('stock', sql.Int, stock)
-            .input('categoria', sql.NVarChar, categoria)
-            .query('UPDATE productos SET nombre = @nombre, precio = @precio, stock = @stock, categoria = @categoria WHERE id_producto = @id');
-        res.status(200).send('Producto actualizado');
-    } catch (error) {
-        console.error('Error al actualizar producto:', error);
-        res.status(500).send('Error al actualizar producto');
-    }
-});
-
-
-    app.listen(PORT, () => {
-        console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    });
-}).catch(err => {
-    console.error('Error al conectar a la base de datos:', err);
+// Iniciar el servidor
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
