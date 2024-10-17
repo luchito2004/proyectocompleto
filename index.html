@@ -74,7 +74,7 @@
             <input type="password" id="password" name="password" required>
             <button type="submit">Ingresar</button>
         </form>
-        <p id="loginMessage"></p>
+        <p id="loginMessage" style="color: red;"></p>
         <button id="goRegister">¿No tienes cuenta? Regístrate</button>
     </div>
 
@@ -88,7 +88,7 @@
             <input type="password" id="regPassword" name="regPassword" required>
             <button type="submit">Crear Cuenta</button>
         </form>
-        <p id="registerMessage"></p>
+        <p id="registerMessage" style="color: green;"></p>
         <button id="goLogin">¿Ya tienes cuenta? Inicia Sesión</button>
     </div>
 
@@ -154,6 +154,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    document.getElementById('loginMessage').textContent = '';
                     loadProductos(); // Cargar los productos
                 } else {
                     document.getElementById('loginMessage').textContent = data.message;
@@ -253,14 +254,12 @@
 
         // Finalizar compra
         document.getElementById('finalizePurchase').addEventListener('click', function() {
-            fetch('/finalizar-compra', { method: 'POST' })
+            fetch('/finalize-purchase', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    alert('Compra exitosa');
-                    document.getElementById('carritoContainer').classList.add('hidden');
-                    loadProductos();
-                }
+                alert('Compra exitosa');
+                document.getElementById('carritoContainer').classList.add('hidden');
+                document.getElementById('productosContainer').classList.remove('hidden');
             });
         });
     </script>

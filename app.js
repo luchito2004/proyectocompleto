@@ -13,7 +13,7 @@ const config = {
     server: 'luchodb.database.windows.net',
     database: 'luchodb',
     options: {
-        trustServerCertificate: false
+        trustServerCertificate: false,
     },
 };
 
@@ -35,6 +35,12 @@ sql.connect(config).then(pool => {
     app.post('/register', async (req, res) => {
         const { email, password } = req.body;
         try {
+            const existingUser = await pool.request()
+                .input('email', sql.VarChar, email)
+                .query('SELECT * FROM usuarios WHERE email = @email');
+            if (existingUser.recordset.length > 0) {
+                return res.status(400).send('El correo ya está en uso');
+            }
             await pool.request()
                 .input('email', sql.VarChar, email)
                 .input('password', sql.VarChar, password)
@@ -55,9 +61,10 @@ sql.connect(config).then(pool => {
                 .input('password', sql.VarChar, password)
                 .query('SELECT * FROM usuarios WHERE email = @email AND password = @password');
             if (result.recordset.length > 0) {
-                res.send('Login exitoso');
+                const usuarioId = result.recordset[0].id; // Asegúrate de que el id esté disponible
+                res.json({ message: 'Login exitoso', usuarioId }); // Devuelve el usuarioId al frontend
             } else {
-                res.send('Correo o contraseña incorrectos');
+                res.status(401).send('Correo o contraseña incorrectos');
             }
         } catch (err) {
             console.error('Error al iniciar sesión:', err);
@@ -177,6 +184,20 @@ sql.connect(config).then(pool => {
         } catch (err) {
             console.error('Error al eliminar producto del carrito:', err);
             res.status(500).send('Error al eliminar producto del carrito');
+        }
+    });
+
+    // Finalizar compra
+    app.post('/finalize-purchase', async (req, res) => {
+        const { usuarioId } = req.body; // Asegúrate de enviar el usuarioId desde el frontend
+        try {
+            await pool.request()
+                .input('usuarioId', sql.Int, usuarioId)
+                .query('DELETE FROM carrito WHERE usuarioId = @usuarioId');
+            res.send('Compra finalizada exitosamente');
+        } catch (err) {
+            console.error('Error al finalizar la compra:', err);
+            res.status(500).send('Error al finalizar la compra');
         }
     });
 
