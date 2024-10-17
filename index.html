@@ -58,124 +58,10 @@
         .hidden {
             display: none;
         }
-    </style>
-</head>
 
-<body>
-    <h1>Granjas El Toro Lucho</h1>
-
-    <div class="container" id="loginContainer">
-        <h2>Iniciar Sesión</h2>
-        <form id="loginForm">
-            <label for="email">Correo Electrónico:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Ingresar</button>
-        </form>
-        <p id="loginMessage"></p>
-        <button id="goRegister">¿No tienes cuenta? Regístrate</button>
-    </div>
-
-    <div class="container hidden" id="registerContainer">
-        <h2>Registro</h2>
-        <form id="registerForm">
-            <label for="regEmail">Correo Electrónico:</label>
-            <input type="email" id="regEmail" name="regEmail" required>
-            <label for="regPassword">Contraseña:</label>
-            <input type="password" id="regPassword" name="regPassword" required>
-            <button type="submit">Crear Cuenta</button>
-        </form>
-        <p id="registerMessage"></p>
-        <button id="goLogin">¿Ya tienes cuenta? Inicia Sesión</button>
-    </div>
-
-    <script>
-        document.getElementById('goRegister').addEventListener('click', function () {
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('registerContainer').classList.remove('hidden');
-        });
-
-        document.getElementById('goLogin').addEventListener('click', function () {
-            document.getElementById('registerContainer').classList.add('hidden');
-            document.getElementById('loginContainer').classList.remove('hidden');
-        });
-
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-                .then(response => response.text())
-                .then(data => {
-                    if (data === 'Login exitoso') {
-                        window.location.href = '/main'; // Redirigir a la pantalla principal
-                    } else {
-                        document.getElementById('loginMessage').textContent = data;
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        });
-
-        // Registro
-        document.getElementById('registerForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-
-            fetch('/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('registerMessage').textContent = data;
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    </script>
-</body>
-
-</html>
-
-
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Granjas El Toro Lucho - Venta de Vacas y Comida</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            text-align: center;
-            padding: 20px;
-            background-color: #4CAF50;
-            color: white;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+        .products,
+        .cart {
+            display: none;
         }
 
         .item {
@@ -202,20 +88,6 @@
             font-weight: bold;
         }
 
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
         #cart {
             text-align: right;
             margin: 20px 0;
@@ -233,12 +105,34 @@
             background-color: #C70039;
         }
 
-        footer {
-            text-align: center;
-            background-color: #333;
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
             color: white;
-            padding: 20px;
-            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -246,7 +140,36 @@
 <body>
     <h1>Granjas El Toro Lucho</h1>
 
-    <div class="container">
+    <!-- Login Section -->
+    <div class="container" id="loginContainer">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm">
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Ingresar</button>
+        </form>
+        <p id="loginMessage"></p>
+        <button id="goRegister">¿No tienes cuenta? Regístrate</button>
+    </div>
+
+    <!-- Register Section -->
+    <div class="container hidden" id="registerContainer">
+        <h2>Registro</h2>
+        <form id="registerForm">
+            <label for="regEmail">Correo Electrónico:</label>
+            <input type="email" id="regEmail" name="regEmail" required>
+            <label for="regPassword">Contraseña:</label>
+            <input type="password" id="regPassword" name="regPassword" required>
+            <button type="submit">Crear Cuenta</button>
+        </form>
+        <p id="registerMessage"></p>
+        <button id="goLogin">¿Ya tienes cuenta? Inicia Sesión</button>
+    </div>
+
+    <!-- Products Section -->
+    <div class="container hidden products" id="productsContainer">
         <h2>Comida para Vacas</h2>
         <div class="item">
             <img src="heno.jpg" alt="Heno">
@@ -270,136 +193,108 @@
             <img src="alfalfa.jpg" alt="Alfalfa">
             <h3>Alfalfa orgánica</h3>
             <p>$180 por kilo</p>
-            <button onclick="addTo
-Cart('Alfalfa', 180)">Agregar al carrito</button>
+            <button onclick="addToCart('Alfalfa', 180)">Agregar al carrito</button>
         </div>
     </div>
 
-
-    <div class="container">
-        <h2>Razas de Vacas a la Venta</h2>
-        <div class="item">
-            <img src="angus.jpg" alt="Vaca Angus">
-            <h3>Vaca Angus</h3>
-            <p>$1500</p>
-            <button onclick="addToCart('Vaca Angus', 1500)">Agregar al carrito</button>
-        </div>
-        <div class="item">
-            <img src="holstein.jpg" alt="Vaca Holstein">
-            <h3>Vaca Holstein</h3>
-            <p>$1300</p>
-            <button onclick="addToCart('Vaca Holstein', 1300)">Agregar al carrito</button>
-        </div>
-        <div class="item">
-            <img src="brahman.jpg" alt="Vaca Brahman">
-            <h3>Vaca Brahman</h3>
-            <p>$1600</p>
-            <button onclick="addToCart('Vaca Brahman', 1600)">Agregar al carrito</button>
-        </div>
-        <div class="item">
-            <img src="jersey.jpg" alt="Vaca Jersey">
-            <h3>Vaca Jersey</h3>
-            <p>$1400</p>
-            <button onclick="addToCart('Vaca Jersey', 1400)">Agregar al carrito</button>
-        </div>
+    <!-- Cart Section -->
+    <div class="container hidden cart" id="cartContainer">
+        <h2>Carrito de Compras</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems"></tbody>
+        </table>
+        <button onclick="finalizePurchase()">Finalizar Compra</button>
+        <p id="purchaseMessage"></p>
     </div>
-
-    <div id="cart">
-        <a href="/cart">Ver Carrito</a>
-    </div>
-
-    <footer>
-        <p>Granjas El Toro Lucho - Todos los derechos reservados © 2024</p>
-    </footer>
 
     <script>
+        let cart = [];
+
+        document.getElementById('goRegister').addEventListener('click', function () {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('registerContainer').classList.remove('hidden');
+        });
+
+        document.getElementById('goLogin').addEventListener('click', function () {
+            document.getElementById('registerContainer').classList.add('hidden');
+            document.getElementById('loginContainer').classList.remove('hidden');
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Simular login exitoso
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('productsContainer').classList.remove('hidden');
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            // Simular registro exitoso
+            document.getElementById('registerMessage').textContent = 'Cuenta creada exitosamente. Ahora puedes iniciar sesión.';
+        });
+
         function addToCart(item, price) {
-            fetch('/add-to-cart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ item, price })
-            })
-                .then(response => response.json())
-                .then(data => alert(data.message))
-                .catch(error => console.error('Error:', error));
+            const product = cart.find(p => p.name === item);
+            if (product) {
+                product.quantity++;
+            } else {
+                cart.push({ name: item, price, quantity: 1 });
+            }
+            alert(`${item} agregado al carrito`);
+        }
+
+        document.getElementById('cart').addEventListener('click', function () {
+            document.getElementById('productsContainer').classList.add('hidden');
+            document.getElementById('cartContainer').classList.remove('hidden');
+            displayCart();
+        });
+
+        function displayCart() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            cart.forEach(item => {
+                cartItems.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>$${item.price}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price * item.quantity}</td>
+                        <td><button onclick="removeFromCart('${item.name}')">Eliminar</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function removeFromCart(item) {
+            cart = cart.filter(p => p.name !== item);
+            displayCart();
+        }
+
+        function finalizePurchase() {
+            if (cart.length === 0) {
+                document.getElementById('purchaseMessage').textContent = 'El carrito está vacío.';
+            } else {
+                document.getElementById('purchaseMessage').textContent = '¡Compra exitosa!';
+                cart = [];
+                displayCart();
+            }
         }
     </script>
+</body>
 
-    <!DOCTYPE html>
-    <html lang="es">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Carrito de Compras - Granjas El Toro Lucho</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f0f0f0;
-                margin: 0;
-                padding: 0;
-            }
-
-            h1 {
-                text-align: center;
-                padding: 20px;
-                background-color: #4CAF50;
-                color: white;
-            }
-
-            .container {
-                max-width: 800px;
-                margin: 20px auto;
-                background-color: rgba(255, 255, 255, 0.9);
-                padding: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                border-radius: 10px;
-            }
-
-            table {
-                width: 100%;
-                margin-bottom: 20px;
-                border-collapse: collapse;
-            }
-
-            th,
-            td {
-                padding: 10px;
-                text-align: left;
-                border: 1px solid #ddd;
-            }
-
-            th {
-                background-color: #007bff;
-                color: white;
-            }
-
-            button {
-                padding: 10px 20px;
-                background-color: #28a745;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            button:hover {
-                background-color: #218838;
-            }
-
-            input {
-                width: 50px;
-                text-align: center;
-            }
-        </style>
-    </head>
-
-    <body>
-        <h1>Carrito de Compras</h1>
-        <div class="container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th
+</html>
