@@ -212,9 +212,9 @@
             document.getElementById('loginContainer').classList.remove('hidden');
         });
 
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Manejar el login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
@@ -223,21 +223,21 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                if (data === 'Login exitoso') {
+                if (data.success) {
+                    document.getElementById('loginMessage').textContent = '¡Ingreso exitoso!';
                     document.getElementById('loginContainer').classList.add('hidden');
                     document.getElementById('productsContainer').classList.remove('hidden');
                 } else {
-                    document.getElementById('loginMessage').textContent = data;
+                    document.getElementById('loginMessage').textContent = 'Error en el ingreso, verifique sus datos.';
                 }
-            })
-            .catch(error => console.error('Error:', error));
+            });
         });
 
-        // Registro
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Manejar el registro
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
 
@@ -246,23 +246,29 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                document.getElementById('registerMessage').textContent = data;
-            })
-            .catch(error => console.error('Error:', error));
+                if (data.success) {
+                    document.getElementById('registerMessage').textContent = '¡Registro exitoso! Ahora puede iniciar sesión.';
+                    document.getElementById('registerContainer').classList.add('hidden');
+                    document.getElementById('loginContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('registerMessage').textContent = 'Error en el registro, intente de nuevo.';
+                }
+            });
         });
 
-        // Agregar al carrito
-        function addToCart(item, price) {
-            fetch('/add-to-cart', {
+        // Función para agregar productos al carrito
+        function addToCart(productName, productPrice) {
+            fetch('/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ item, price })
+                body: JSON.stringify({ productName, productPrice })
             })
             .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => console.error('Error:', error));
+            .then(data => {
+                alert('Producto agregado al carrito.');
+            });
         }
     </script>
 </body>
