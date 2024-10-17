@@ -130,138 +130,53 @@
     </div>
 
     <script>
-        document.getElementById('goRegister').addEventListener('click', function() {
+        document.getElementById('goRegister').onclick = function() {
             document.getElementById('loginContainer').classList.add('hidden');
             document.getElementById('registerContainer').classList.remove('hidden');
-        });
+        };
 
-        document.getElementById('goLogin').addEventListener('click', function() {
+        document.getElementById('goLogin').onclick = function() {
             document.getElementById('registerContainer').classList.add('hidden');
             document.getElementById('loginContainer').classList.remove('hidden');
-        });
+        };
 
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('loginMessage').textContent = '';
-                    loadProductos(); // Cargar los productos
-                } else {
-                    document.getElementById('loginMessage').textContent = data.message;
-                }
-            });
-        });
-
-        // Registro
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // Manejo del registro
+        document.getElementById('registerForm').onsubmit = async function(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
-
-            fetch('/register', {
+            const response = await fetch('/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('registerMessage').textContent = data.message;
+                body: JSON.stringify({ email, password }),
             });
-        });
+            const message = await response.text();
+            document.getElementById('registerMessage').textContent = message;
+            if (response.ok) {
+                document.getElementById('registerForm').reset();
+            }
+        };
 
-        // Función para cargar los productos
-        function loadProductos() {
-            fetch('/productos')
-            .then(response => response.json())
-            .then(data => {
-                const productosTable = document.querySelector('#productosTable tbody');
-                productosTable.innerHTML = '';
-                data.forEach(producto => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${producto.nombre}</td>
-                        <td>${producto.precio}</td>
-                        <td><input type="number" id="cantidad-${producto.id}" min="1" value="1"></td>
-                        <td><button onclick="addToCart(${producto.id})">Agregar</button></td>
-                    `;
-                    productosTable.appendChild(row);
-                });
+        // Manejo del login
+        document.getElementById('loginForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('loginMessage').textContent = result.message;
+                // Redirigir a la página de productos
                 document.getElementById('loginContainer').classList.add('hidden');
                 document.getElementById('productosContainer').classList.remove('hidden');
-            });
-        }
-
-        // Función para agregar al carrito
-        function addToCart(productId) {
-            const cantidad = document.getElementById(`cantidad-${productId}`).value;
-            fetch('/add-to-cart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId, cantidad })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Producto agregado al carrito');
-                }
-            });
-        }
-
-        // Mostrar carrito
-        document.getElementById('viewCart').addEventListener('click', function() {
-            fetch('/carrito')
-            .then(response => response.json())
-            .then(data => {
-                const carritoTable = document.querySelector('#carritoTable tbody');
-                carritoTable.innerHTML = '';
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.nombre}</td>
-                        <td>${item.cantidad}</td>
-                        <td><button onclick="removeFromCart(${item.id})">Eliminar</button></td>
-                    `;
-                    carritoTable.appendChild(row);
-                });
-                document.getElementById('productosContainer').classList.add('hidden');
-                document.getElementById('carritoContainer').classList.remove('hidden');
-            });
-        });
-
-        // Eliminar del carrito
-        function removeFromCart(productId) {
-            fetch(`/remove-from-cart/${productId}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Producto eliminado del carrito');
-                    document.getElementById('viewCart').click();
-                }
-            });
-        }
-
-        // Finalizar compra
-        document.getElementById('finalizePurchase').addEventListener('click', function() {
-            fetch('/finalize-purchase', { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                alert('Compra exitosa');
-                document.getElementById('carritoContainer').classList.add('hidden');
-                document.getElementById('productosContainer').classList.remove('hidden');
-            });
-        });
+            } else {
+                document.getElementById('loginMessage').textContent = result.message || 'Error en el inicio de sesión';
+            }
+        };
     </script>
 </body>
 </html>
