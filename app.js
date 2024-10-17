@@ -1,24 +1,28 @@
 const express = require('express');
+const sql = require('mssql');
 const path = require('path');
-const bodyParser = require('body-parser');
-const mssql = require('mssql');
-
-// Configuración de la base de datos en Azure SQL
-const dbConfig = {
-    user: 'adminlu',
-    password: 'Lucho12345',
-    server: 'manidb.database.windows.net',
-    database: 'manidb',
-    options: {
-
-        trustServerCertificate: false,
-    },
-};
+const session = require('express-session');
 
 const app = express();
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos desde la carpeta 'public'
+const PORT = process.env.PORT || 3000;
 
+// Configuración de la base de datos
+const config = {
+    user: 'adminlu',
+    password: 'Lucho12345',
+    server: 'luchodb.database.windows.net',
+    database: 'luchodb',
+    options: { trustServerCertificate: true }
+};
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
 // Middleware para la conexión a la base de datos en cada solicitud
 app.use((req, res, next) => {
     mssql.connect(dbConfig).then(pool => {
@@ -89,8 +93,7 @@ app.get('/cart', (req, res) => {
         });
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
+// Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
