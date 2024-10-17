@@ -7,10 +7,10 @@ const mssql = require('mssql');
 const dbConfig = {
     user: 'adminlu',
     password: 'Lucho12345',
-    server: 'luchodb.database.windows.net',
-    database: 'luchodb',
+    server: 'manidb.database.windows.net',
+    database: 'manidb',
     options: {
-        encrypt: false, // Sin encriptación por el momento
+
         trustServerCertificate: false,
     },
 };
