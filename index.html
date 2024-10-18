@@ -86,6 +86,7 @@
 
 <div class="container">
 
+    <!-- Página de Login -->
     <div id="loginPage">
         <h2>Iniciar Sesión</h2>
         <input type="email" placeholder="Correo" required>
@@ -103,6 +104,7 @@
         </div>
     </div>
 
+    <!-- Página de Productos -->
     <div id="productPage" class="hidden">
         <h2>Productos</h2>
         <div class="product-container">
@@ -162,6 +164,7 @@
         </div>
     </div>
 
+    <!-- Página del Carrito -->
     <div id="cartPage" class="hidden">
         <h2>Carrito</h2>
         <div class="cart">
@@ -183,6 +186,7 @@
         </div>
     </div>
 
+    <!-- Mensaje -->
     <div id="message" class="hidden"></div>
 </div>
 
@@ -210,7 +214,7 @@
                     <td>${item.name}</td>
                     <td>$${item.price}</td>
                     <td>
-                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity('${item.name}', this.value)">
+                        <input type="number" value="${item.quantity}" onchange="updateQuantity('${item.name}', this.value)">
                     </td>
                     <td>$${total}</td>
                     <td><button class="button" onclick="removeFromCart('${item.name}')">Eliminar</button></td>
@@ -230,6 +234,7 @@
     function removeFromCart(name) {
         cart = cart.filter(item => item.name !== name);
         renderCart();
+        showMessage(`${name} eliminado del carrito.`);
     }
 
     function showMessage(message) {
@@ -274,8 +279,8 @@
         alert('Registro (Simulado)');
     }
 
-    // Inicializar mostrando la página de productos
-    showPage('productPage');
+    // Inicializar mostrando la página de login
+    showPage('loginPage');
 </script>
 
 </body>
