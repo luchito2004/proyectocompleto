@@ -56,9 +56,6 @@
             padding: 10px;
             text-align: left;
         }
-        #productosContainer, #carritoContainer {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -130,14 +127,26 @@
     </div>
 
     <script>
+        // Función para mostrar la sección deseada
+        function showSection(section) {
+            const sections = ['loginContainer', 'registerContainer', 'productosContainer', 'carritoContainer'];
+            sections.forEach(sec => {
+                document.getElementById(sec).classList.add('hidden');
+            });
+            document.getElementById(section).classList.remove('hidden');
+        }
+
+        // Manejo de navegación entre secciones
         document.getElementById('goRegister').onclick = function() {
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('registerContainer').classList.remove('hidden');
+            showSection('registerContainer');
         };
 
         document.getElementById('goLogin').onclick = function() {
-            document.getElementById('registerContainer').classList.add('hidden');
-            document.getElementById('loginContainer').classList.remove('hidden');
+            showSection('loginContainer');
+        };
+
+        document.getElementById('viewCart').onclick = function() {
+            showSection('carritoContainer');
         };
 
         // Manejo del registro
@@ -154,6 +163,7 @@
             document.getElementById('registerMessage').textContent = message;
             if (response.ok) {
                 document.getElementById('registerForm').reset();
+                showSection('loginContainer'); // Volver al login después de registrarse
             }
         };
 
@@ -170,9 +180,7 @@
             const result = await response.json();
             if (response.ok) {
                 document.getElementById('loginMessage').textContent = result.message;
-                // Redirigir a la página de productos
-                document.getElementById('loginContainer').classList.add('hidden');
-                document.getElementById('productosContainer').classList.remove('hidden');
+                showSection('productosContainer'); // Redirigir a la página de productos
             } else {
                 document.getElementById('loginMessage').textContent = result.message || 'Error en el inicio de sesión';
             }
