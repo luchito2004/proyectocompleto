@@ -7,55 +7,150 @@
     <title>Granjas El Toro Lucho</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eaeaea;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #444;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
             padding: 20px;
-            border: 1px solid #ccc;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        label,
+        input,
+        button {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        input,
+        button {
+            padding: 12px;
             border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
 
         .hidden {
             display: none;
         }
 
-        .alert {
-            margin-top: 10px;
-            font-weight: bold;
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
         }
 
-        .success {
-            color: green;
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #555;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
         }
 
         .error {
             color: red;
+            background-color: #ffe6e6;
         }
 
-        .button-container {
-            margin-top: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
+        .success {
+            color: green;
+            background-color: #e6ffe6;
         }
 
         .product-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
             margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
 
         .product-info {
-            flex-grow: 1;
+            flex: 1;
+        }
+
+        .product-quantity {
+            width: 80px;
+            margin-right: 10px;
+        }
+
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .back-button {
+            background-color: #dc3545;
+        }
+
+        .back-button:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
@@ -94,7 +189,9 @@
     <!-- Productos -->
     <div class="container hidden" id="productosContainer">
         <h2>Productos para Vacas</h2>
-        <div id="productosList"></div>
+        <div id="productosList">
+            <!-- Aquí se cargarán los productos -->
+        </div>
         <button id="viewCart">Ver Carrito</button>
     </div>
 
@@ -105,11 +202,13 @@
             <thead>
                 <tr>
                     <th>Vaca</th>
-                    <th>Precio</th>
+                    <th>Precio (CLP)</th>
                     <th>Agregar al Carrito</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <!-- Aquí se cargarán las vacas -->
+            </tbody>
         </table>
     </div>
 
@@ -124,9 +223,11 @@
                     <th>Eliminar</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <!-- Aquí se cargarán los productos del carrito -->
+            </tbody>
         </table>
-        <div class="total" id="totalContainer">Total: 0</div>
+        <div class="total" id="totalContainer">Total: 0 CLP</div>
         <div class="button-container">
             <button id="finalizePurchase">Finalizar Compra</button>
             <button id="backToProducts" class="back-button">Volver a Productos</button>
@@ -135,7 +236,6 @@
     </div>
 
     <script>
-        // Manejo del registro y login
         document.getElementById('goRegister').onclick = function () {
             document.getElementById('loginContainer').classList.add('hidden');
             document.getElementById('registerContainer').classList.remove('hidden');
@@ -146,23 +246,45 @@
             document.getElementById('loginContainer').classList.remove('hidden');
         };
 
-        document.getElementById('loginForm').onsubmit = function (event) {
-            event.preventDefault();
-            document.getElementById('loginMessage').textContent = 'Inicio de sesión exitoso.';
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('productosContainer').classList.remove('hidden');
-            loadProducts();
-            loadCows();
+        // Manejo del registro
+        document.getElementById('registerForm').onsubmit = async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const message = await response.text();
+            document.getElementById('registerMessage').textContent = message;
+            if (response.ok) {
+                document.getElementById('registerForm').reset();
+            }
         };
 
-        document.getElementById('registerForm').onsubmit = function (event) {
-            event.preventDefault();
-            document.getElementById('registerMessage').textContent = 'Registro exitoso. Ahora puedes iniciar sesión.';
-            document.getElementById('registerContainer').classList.add('hidden');
-            document.getElementById('loginContainer').classList.remove('hidden');
+        // Manejo del login
+        document.getElementById('loginForm').onsubmit = async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const result = await response.json();
+            document.getElementById('loginMessage').textContent = result.message || 'Error en el inicio de sesión';
+            if (response.ok) {
+                // Redirigir a la página de productos
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('productosContainer').classList.remove('hidden');
+                loadProducts(); // Cargar productos al iniciar sesión
+                loadCows(); // Cargar vacas disponibles
+            }
         };
 
-        // Función para cargar productos
+        // Función para cargar productos (simulación)
         async function loadProducts() {
             const productos = [
                 { name: 'Alimento para Vacas', price: 8000 },
@@ -172,9 +294,6 @@
                 { name: 'Fardo De Paja', price: 3000 },
                 { name: 'Heno De Pasto', price: 4000 },
                 { name: 'Leche', price: 2000 },
-                { name: 'Cereal para Ganado', price: 1500 },
-                { name: 'Antiparasitario', price: 2500 },
-                { name: 'Vacuna Bovino', price: 3500 }
             ];
             const productosList = document.getElementById('productosList');
             productos.forEach(product => {
@@ -182,10 +301,10 @@
                 productRow.classList.add('product-row');
                 productRow.innerHTML = `
                     <div class="product-info">
-                        <strong>${product.name}</strong> - ${product.price}
+                        <strong>${product.name}</strong> - ${product.price} CLP
                     </div>
                     <div>
-                        <input type="number" min="0" value="0" class="product-quantity" data-name="${product.name}">
+                        <input type="number" min="1" value="1" class="product-quantity" data-name="${product.name}">
                         <button class="add-to-cart">Agregar</button>
                     </div>
                 `;
@@ -200,12 +319,11 @@
                     const productName = row.querySelector('.product-quantity').dataset.name;
                     const quantity = row.querySelector('.product-quantity').value;
                     addToCart(productName, quantity);
-                    row.querySelector('.product-quantity').value = 0; // Resetear cantidad a 0
                 };
             });
         }
 
-        // Función para cargar vacas
+        // Función para cargar vacas (simulación)
         async function loadCows() {
             const cows = [
                 { name: 'Vaca Holstein', price: 3000000 },
@@ -213,15 +331,13 @@
                 { name: 'Vaca Angus', price: 3200000 },
                 { name: 'Vaca Hereford', price: 3100000 },
                 { name: 'Vaca Limousin', price: 3500000 },
-                { name: 'Vaca Guernsey', price: 3400000 },
-                { name: 'Vaca Ayrshire', price: 3300000 }
             ];
             const tbody = document.getElementById('vacasTable').querySelector('tbody');
             cows.forEach(cow => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${cow.name}</td>
-                    <td>${cow.price}</td>
+                    <td>${cow.price} CLP</td>
                     <td><button class="add-cow-to-cart">Agregar</button></td>
                 `;
                 tbody.appendChild(row);
@@ -242,49 +358,51 @@
         // Carrito de compras
         const carrito = [];
 
-        function addToCart(name, quantity, price) {
-            quantity = parseInt(quantity);
-            if (quantity <= 0) return; // No agregar si la cantidad es 0 o negativa
-
-            const existingProduct = carrito.find(item => item.name === name);
+        function addToCart(productName, quantity, price) {
+            const existingProduct = carrito.find(item => item.name === productName);
             if (existingProduct) {
-                existingProduct.quantity += quantity;
+                existingProduct.quantity += parseInt(quantity);
             } else {
-                carrito.push({ name, quantity, price: price || 0 }); // Si no hay precio, es un producto normal
+                carrito.push({ name: productName, quantity: parseInt(quantity), price });
             }
-            updateCartDisplay();
+            alert(`${quantity} de ${productName} agregado al carrito.`);
+            updateTotal(); // Actualizar el total
         }
 
         // Mostrar carrito
-        function updateCartDisplay() {
-            const cartTableBody = document.getElementById('carritoTable').querySelector('tbody');
-            cartTableBody.innerHTML = ''; // Limpiar el contenido previo
+        document.getElementById('viewCart').onclick = function () {
+            document.getElementById('productosContainer').classList.add('hidden');
+            document.getElementById('vacasContainer').classList.add('hidden');
+            document.getElementById('carritoContainer').classList.remove('hidden');
+            displayCart();
+        };
 
+        function displayCart() {
+            const tbody = document.getElementById('carritoTable').querySelector('tbody');
+            tbody.innerHTML = ''; // Limpiar tabla antes de mostrar
             carrito.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${item.name}</td>
-                    <td>
-                        <input type="number" value="${item.quantity}" min="0" class="cart-quantity" data-index="${index}">
-                    </td>
+                    <td><input type="number" value="${item.quantity}" min="1" class="cart-quantity" data-index="${index}"></td>
                     <td><button class="remove-from-cart">Eliminar</button></td>
                 `;
-                cartTableBody.appendChild(row);
+                tbody.appendChild(row);
             });
 
-            // Manejar cambios en la cantidad
-            const quantityInputs = document.querySelectorAll('.cart-quantity');
-            quantityInputs.forEach(input => {
+            // Manejar el cambio de cantidad
+            const cartQuantityInputs = document.querySelectorAll('.cart-quantity');
+            cartQuantityInputs.forEach(input => {
                 input.onchange = function () {
-                    const index = this.dataset.index;
-                    const newQuantity = parseInt(this.value);
-                    if (newQuantity <= 0) {
-                        carrito.splice(index, 1); // Eliminar el producto si la cantidad es 0
+                    const index = input.dataset.index;
+                    const newQuantity = parseInt(input.value);
+                    if (newQuantity < 1) {
+                        alert('La cantidad debe ser al menos 1.');
+                        input.value = carrito[index].quantity; // Restaurar la cantidad anterior
                     } else {
-                        carrito[index].quantity = newQuantity; // Actualizar cantidad
+                        carrito[index].quantity = newQuantity;
                     }
                     updateTotal(); // Actualizar total cuando cambia la cantidad
-                    updateCartDisplay(); // Actualizar la vista del carrito
                 };
             });
 
@@ -293,7 +411,7 @@
             removeButtons.forEach((button, index) => {
                 button.onclick = function () {
                     carrito.splice(index, 1);
-                    updateCartDisplay(); // Actualizar la tabla del carrito
+                    displayCart(); // Actualizar la tabla del carrito
                     updateTotal(); // Actualizar total después de eliminar
                 };
             });
@@ -307,7 +425,7 @@
             carrito.forEach(item => {
                 total += item.price * item.quantity;
             });
-            document.getElementById('totalContainer').textContent = `Total: ${total}`; // Mostrar total sin pesos
+            document.getElementById('totalContainer').textContent = `Total: ${total} CLP`;
         }
 
         // Volver a la sección de productos
@@ -321,17 +439,11 @@
             if (carrito.length > 0) {
                 document.getElementById('purchaseMessage').textContent = 'Compra exitosa. Gracias por su compra!';
                 carrito.length = 0; // Vaciar carrito
-                updateCartDisplay(); // Actualizar carrito
+                displayCart(); // Actualizar carrito
                 updateTotal(); // Actualizar total
             } else {
                 alert('El carrito está vacío.');
             }
-        };
-
-        // Mostrar vacas
-        document.getElementById('viewCart').onclick = function () {
-            document.getElementById('productosContainer').classList.add('hidden');
-            document.getElementById('carritoContainer').classList.remove('hidden');
         };
     </script>
 </body>
