@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,61 +8,113 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            padding: 20px;
         }
+
         h1 {
             text-align: center;
+            color: #4CAF50;
+        }
+
+        h3 {
+            color: #4CAF50;
             margin-top: 20px;
         }
-        .container {
-            max-width: 400px;
-            margin: 100px auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        label, input, button {
-            display: block;
-            width: 100%;
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+            background-color: #fff;
+            width: 180px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
             margin-bottom: 10px;
         }
-        input, button {
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+
+        #cartPage {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .hidden {
-            display: none;
-        }
+
         table {
             width: 100%;
-            margin-top: 20px;
             border-collapse: collapse;
+            margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
+
+        th,
+        td {
+            border: 1px solid #ccc;
             padding: 10px;
-            text-align: left;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
         }
     </style>
 </head>
-<body>
-    <h1>Granjas El Toro Lucho</h1>
 
-    <!-- Inicio de sesión -->
+<!-- Inicio de sesión -->
     <div class="container" id="loginContainer">
         <h2>Iniciar Sesión</h2>
         <form id="loginForm">
@@ -88,46 +141,274 @@
         <p id="registerMessage" style="color: green;"></p>
         <button id="goLogin">¿Ya tienes cuenta? Inicia Sesión</button>
     </div>
+    
 
-    <!-- Productos -->
-    <div class="container hidden" id="productosContainer">
-        <h2>Productos para Vacas</h2>
-        <table id="productosTable">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
-                    <th>Agregar al Carrito</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí se cargarán los productos -->
-            </tbody>
-        </table>
-        <button id="viewCart">Ver Carrito</button>
+<!-- Página de Productos -->
+<div id="productPage" style="display: none;">
+    <h1>Productos Disponibles</h1>
+    <h3>Alimentos</h3>
+    <div class="container">
+        <!-- Producto: Sal Mineral -->
+        <div class="product-card">
+            <h3>Sal Mineral</h3>
+            <img src="https://via.placeholder.com/150" alt="Sal Mineral">
+            <p>Precio: $50</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadSal" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Sal Mineral', 50, parseInt(document.getElementById('cantidadSal').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Concentrado de Alta Energía -->
+        <div class="product-card">
+            <h3>Concentrado de Alta Energía</h3>
+            <img src="https://via.placeholder.com/150" alt="Concentrado de Alta Energía">
+            <p>Precio: $80</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadConcentrado" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Concentrado de Alta Energía', 80, parseInt(document.getElementById('cantidadConcentrado').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Forraje -->
+        <div class="product-card">
+            <h3>Forraje</h3>
+            <img src="https://via.placeholder.com/150" alt="Forraje">
+            <p>Precio: $200</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadForraje" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Forraje', 200, parseInt(document.getElementById('cantidadForraje').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Granos -->
+        <div class="product-card">
+            <h3>Granos</h3>
+            <img src="https://via.placeholder.com/150" alt="Granos">
+            <p>Precio: $150</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadGranos" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Granos', 150, parseInt(document.getElementById('cantidadGranos').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Minerales -->
+        <div class="product-card">
+            <h3>Minerales</h3>
+            <img src="https://via.placeholder.com/150" alt="Minerales">
+            <p>Precio: $75</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadMinerales" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Minerales', 75, parseInt(document.getElementById('cantidadMinerales').value))">Agregar
+                al Carrito</button>
+        </div>
     </div>
 
-    <!-- Carrito -->
-    <div class="container hidden" id="carritoContainer">
-        <h2>Carrito de Compras</h2>
-        <table id="carritoTable">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí se cargarán los productos del carrito -->
-            </tbody>
-        </table>
-        <button id="finalizePurchase">Finalizar Compra</button>
-        <p id="purchaseMessage" style="color: green;"></p>
+    <h3>Vacas</h3>
+    <div class="container">
+        <!-- Producto: Vaca Holstein -->
+        <div class="product-card">
+            <h3>Vaca Holstein</h3>
+            <img src="https://via.placeholder.com/150" alt="Vaca Holstein">
+            <p>Precio: $1,200</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadHolstein" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Vaca Holstein', 1200, parseInt(document.getElementById('cantidadHolstein').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Vaca Jersey -->
+        <div class="product-card">
+            <h3>Vaca Jersey</h3>
+            <img src="https://via.placeholder.com/150" alt="Vaca Jersey">
+            <p>Precio: $1,000</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadJersey" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Vaca Jersey', 1000, parseInt(document.getElementById('cantidadJersey').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Vaca Pardo Suizo -->
+        <div class="product-card">
+            <h3>Vaca Pardo Suizo</h3>
+            <img src="https://via.placeholder.com/150" alt="Vaca Pardo Suizo">
+            <p>Precio: $1,100</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadPardo" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Vaca Pardo Suizo', 1100, parseInt(document.getElementById('cantidadPardo').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Vaca Angus -->
+        <div class="product-card">
+            <h3>Vaca Angus</h3>
+            <img src="https://via.placeholder.com/150" alt="Vaca Angus">
+            <p>Precio: $1,300</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadAngus" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Vaca Angus', 1300, parseInt(document.getElementById('cantidadAngus').value))">Agregar
+                al Carrito</button>
+        </div>
+        <!-- Producto: Vaca Hereford -->
+        <div class="product-card">
+            <h3>Vaca Hereford</h3>
+            <img src="https://via.placeholder.com/150" alt="Vaca Hereford">
+            <p>Precio: $1,250</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadHereford" value="0" min="0" max="10">
+            <button class="button"
+                onclick="addToCart('Vaca Hereford', 1250, parseInt(document.getElementById('cantidadHereford').value))">Agregar
+                al Carrito</button>
+        </div>
     </div>
 
-    <script>
+    <button class="button" onclick="goToCart()">Ver Carrito</button>
+</div>
+
+<!-- Página de Carrito -->
+<div id="cartPage" style="display: none;">
+    <h1>Carrito de Compras</h1>
+    <table id="cartTable">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cartBody"></tbody>
+    </table>
+    <div id="totalAmount"></div>
+    <button class="button" onclick="goToProducts()">Volver a Productos</button>
+</div>
+
+<script>
+    let cart = [];
+
+    function login() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        // Validar credenciales (puedes personalizar la lógica aquí)
+        if (email === "user@example.com" && password === "password") {
+            alert("Inicio de sesión exitoso.");
+            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("productPage").style.display = "block";
+        } else {
+            document.getElementById("loginError").innerText = "Credenciales incorrectas.";
+            document.getElementById("loginError").style.display = "block";
+        }
+    }
+
+    function showRegister() {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("register").style.display = "block";
+    }
+
+    function hideRegister() {
+        document.getElementById("register").style.display = "none";
+        document.getElementById("loginPage").style.display = "block";
+    }
+
+    function register() {
+        const name = document.getElementById("registerName").value;
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+
+        // Validar que todos los campos estén completos
+        if (!name || !email || !password) {
+            document.getElementById("registerError").innerText = "Por favor, complete todos los campos.";
+            document.getElementById("registerError").style.display = "block";
+            return;
+        }
+
+        alert("Registro exitoso.");
+        document.getElementById("register").style.display = "none";
+        document.getElementById("loginPage").style.display = "block";
+    }
+
+    function addToCart(product, price, quantity) {
+        if (quantity <= 0) {
+            alert("La cantidad debe ser al menos 1.");
+            return;
+        }
+
+        const existingProduct = cart.find(item => item.product === product);
+        if (existingProduct) {
+            existingProduct.quantity += quantity;
+            alert(`${product} ha sido actualizado en el carrito.`);
+        } else {
+            cart.push({ product, price, quantity });
+            alert(`${product} ha sido agregado al carrito.`);
+        }
+
+        // Reset quantity input to 0 after adding to cart
+        document.getElementById(`cantidad${product.replace(/\s/g, '')}`).value = 0;
+        renderCart();
+    }
+
+    function removeFromCart(product) {
+        cart = cart.filter(item => item.product !== product);
+        alert(`${product} ha sido eliminado del carrito.`);
+        renderCart();
+    }
+
+    function modifyQuantity(product) {
+        const newQuantity = prompt(`Modificar cantidad para ${product}. Ingrese la nueva cantidad:`);
+        const quantity = parseInt(newQuantity);
+        if (isNaN(quantity) || quantity < 0) {
+            alert("Cantidad no válida. Debe ser un número positivo.");
+            return;
+        }
+
+        const existingProduct = cart.find(item => item.product === product);
+        if (existingProduct) {
+            existingProduct.quantity = quantity;
+            alert(`${product} ha sido actualizado a ${quantity} en el carrito.`);
+        } else {
+            alert(`${product} no se encuentra en el carrito.`);
+        }
+
+        renderCart();
+    }
+
+    function renderCart() {
+        const cartBody = document.getElementById("cartBody");
+        cartBody.innerHTML = '';
+        let total = 0;
+
+        cart.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.product}</td>
+                <td>$${item.price}</td>
+                <td>${item.quantity}</td>
+                <td>
+                    <button class="button" onclick="removeFromCart('${item.product}')">Eliminar</button>
+                    <button class="button" onclick="modifyQuantity('${item.product}')">Modificar</button>
+                </td>
+            `;
+            cartBody.appendChild(row);
+            total += item.price * item.quantity;
+        });
+
+        document.getElementById("totalAmount").innerText = `Total: $${total}`;
+    }
+
+    function goToCart() {
+        document.getElementById("productPage").style.display = "none";
+        document.getElementById("cartPage").style.display = "block";
+        renderCart();
+    }
+
+    function goToProducts() {
+        document.getElementById("cartPage").style.display = "none";
+        document.getElementById("productPage").style.display = "block";
+    }
+
         document.getElementById('goRegister').onclick = function() {
             document.getElementById('loginContainer').classList.add('hidden');
             document.getElementById('registerContainer').classList.remove('hidden');
@@ -176,91 +457,6 @@
                 document.getElementById('loginMessage').textContent = result.message || 'Error en el inicio de sesión';
             }
         };
-
-        // Función para cargar productos (simulación)
-        async function loadProducts() {
-            const productos = [
-                { name: 'Alimento para Vacas', price: 10.0 },
-                { name: 'Heno de Alfalfa', price: 5.0 },
-                { name: 'Suplemento Mineral', price: 7.0 },
-            ];
-            const tbody = document.getElementById('productosTable').querySelector('tbody');
-            productos.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.price} $</td>
-                    <td><input type="number" min="1" value="1" class="product-quantity" data-name="${product.name}"></td>
-                    <td><button class="add-to-cart">Agregar</button></td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            // Manejar el clic en "Agregar al Carrito"
-            const addToCartButtons = document.querySelectorAll('.add-to-cart');
-            addToCartButtons.forEach(button => {
-                button.onclick = function() {
-                    const row = button.closest('tr');
-                    const productName = row.querySelector('.product-quantity').dataset.name;
-                    const quantity = row.querySelector('.product-quantity').value;
-                    addToCart(productName, quantity);
-                };
-            });
-        }
-
-        // Carrito de compras
-        const carrito = [];
-
-        function addToCart(productName, quantity) {
-            const existingProduct = carrito.find(item => item.name === productName);
-            if (existingProduct) {
-                existingProduct.quantity += parseInt(quantity);
-            } else {
-                carrito.push({ name: productName, quantity: parseInt(quantity) });
-            }
-            alert(`${quantity} de ${productName} agregado al carrito.`);
-        }
-
-        // Mostrar carrito
-        document.getElementById('viewCart').onclick = function() {
-            document.getElementById('productosContainer').classList.add('hidden');
-            document.getElementById('carritoContainer').classList.remove('hidden');
-            displayCart();
-        };
-
-        function displayCart() {
-            const tbody = document.getElementById('carritoTable').querySelector('tbody');
-            tbody.innerHTML = ''; // Limpiar tabla antes de mostrar
-            carrito.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.quantity}</td>
-                    <td><button class="remove-from-cart">Eliminar</button></td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            // Manejar el clic en "Eliminar"
-            const removeButtons = document.querySelectorAll('.remove-from-cart');
-            removeButtons.forEach((button, index) => {
-                button.onclick = function() {
-                    carrito.splice(index, 1);
-                    displayCart(); // Actualizar la tabla del carrito
-                };
-            });
-        }
-
-        // Finalizar compra
-        document.getElementById('finalizePurchase').onclick = function() {
-            if (carrito.length > 0) {
-                document.getElementById('purchaseMessage').textContent = 'Compra exitosa. Gracias por su compra!';
-                carrito.length = 0; // Vaciar carrito
-                displayCart(); // Actualizar carrito
-            } else {
-                alert('El carrito está vacío.');
-            }
-        };
-    </script>
+</script>
 </body>
-</html>
+
