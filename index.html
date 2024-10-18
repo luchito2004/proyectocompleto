@@ -45,41 +45,24 @@
             text-align: center;
             background-color: #fff;
             width: 180px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .product-card img {
             max-width: 100%;
             height: auto;
         }
-        .cart {
-            display: none;
-        }
-        #cartTable {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-        #cartTable th, #cartTable td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
-        #totalAmount {
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .login-container, .register-container {
+        .login-container {
             max-width: 400px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .login-container input, .register-container input {
-            width: calc(100% - 20px);
+        input {
+            width: calc(100% - 22px);
             padding: 10px;
-            margin: 5px 0;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -97,7 +80,7 @@
 </div>
 
 <!-- Página de Registro -->
-<div id="register" class="register-container" style="display: none;">
+<div id="register" style="display: none;">
     <h1>Registro</h1>
     <input type="text" placeholder="Nombre" required><br>
     <input type="text" placeholder="Correo Electrónico" required><br>
@@ -109,8 +92,6 @@
 <!-- Página de Productos -->
 <div id="productPage" style="display: none;">
     <h1>Productos Disponibles</h1>
-
-    <!-- Alimentos -->
     <h3>Alimentos</h3>
     <div class="container">
         <!-- Producto: Sal Mineral -->
@@ -119,7 +100,7 @@
             <img src="https://via.placeholder.com/150" alt="Sal Mineral">
             <p>Precio: $50</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadSal" value="0" min="0" max="10">
+            <input type="number" id="cantidadSal" value="1" min="0" max="10">
             <button class="button" onclick="addToCart('Sal Mineral', 50, parseInt(document.getElementById('cantidadSal').value))">Agregar al Carrito</button>
         </div>
         <!-- Producto: Concentrado de Alta Energía -->
@@ -128,39 +109,38 @@
             <img src="https://via.placeholder.com/150" alt="Concentrado de Alta Energía">
             <p>Precio: $80</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadConcentrado" value="0" min="0" max="10">
+            <input type="number" id="cantidadConcentrado" value="1" min="0" max="10">
             <button class="button" onclick="addToCart('Concentrado de Alta Energía', 80, parseInt(document.getElementById('cantidadConcentrado').value))">Agregar al Carrito</button>
-        </div>
-        <!-- Producto: Heno -->
-        <div class="product-card">
-            <h3>Heno</h3>
-            <img src="https://via.placeholder.com/150" alt="Heno">
-            <p>Precio: $120</p>
-            <label>Cantidad:</label>
-            <input type="number" id="cantidadHeno" value="0" min="0" max="10">
-            <button class="button" onclick="addToCart('Heno', 120, parseInt(document.getElementById('cantidadHeno').value))">Agregar al Carrito</button>
         </div>
         <!-- Producto: Forraje -->
         <div class="product-card">
             <h3>Forraje</h3>
             <img src="https://via.placeholder.com/150" alt="Forraje">
-            <p>Precio: $90</p>
+            <p>Precio: $200</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadForraje" value="0" min="0" max="10">
-            <button class="button" onclick="addToCart('Forraje', 90, parseInt(document.getElementById('cantidadForraje').value))">Agregar al Carrito</button>
+            <input type="number" id="cantidadForraje" value="1" min="0" max="10">
+            <button class="button" onclick="addToCart('Forraje', 200, parseInt(document.getElementById('cantidadForraje').value))">Agregar al Carrito</button>
         </div>
-        <!-- Producto: Vitamina A -->
+        <!-- Producto: Granos -->
         <div class="product-card">
-            <h3>Vitamina A</h3>
-            <img src="https://via.placeholder.com/150" alt="Vitamina A">
-            <p>Precio: $30</p>
+            <h3>Granos</h3>
+            <img src="https://via.placeholder.com/150" alt="Granos">
+            <p>Precio: $150</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadVitaminaA" value="0" min="0" max="10">
-            <button class="button" onclick="addToCart('Vitamina A', 30, parseInt(document.getElementById('cantidadVitaminaA').value))">Agregar al Carrito</button>
+            <input type="number" id="cantidadGranos" value="1" min="0" max="10">
+            <button class="button" onclick="addToCart('Granos', 150, parseInt(document.getElementById('cantidadGranos').value))">Agregar al Carrito</button>
+        </div>
+        <!-- Producto: Minerales -->
+        <div class="product-card">
+            <h3>Minerales</h3>
+            <img src="https://via.placeholder.com/150" alt="Minerales">
+            <p>Precio: $75</p>
+            <label>Cantidad:</label>
+            <input type="number" id="cantidadMinerales" value="1" min="0" max="10">
+            <button class="button" onclick="addToCart('Minerales', 75, parseInt(document.getElementById('cantidadMinerales').value))">Agregar al Carrito</button>
         </div>
     </div>
-
-    <!-- Vacas -->
+    
     <h3>Vacas</h3>
     <div class="container">
         <!-- Producto: Vaca Holstein -->
@@ -169,7 +149,7 @@
             <img src="https://via.placeholder.com/150" alt="Vaca Holstein">
             <p>Precio: $1,200</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadHolstein" value="0" min="0" max="10">
+            <input type="number" id="cantidadHolstein" value="1" min="0" max="10">
             <button class="button" onclick="addToCart('Vaca Holstein', 1200, parseInt(document.getElementById('cantidadHolstein').value))">Agregar al Carrito</button>
         </div>
         <!-- Producto: Vaca Jersey -->
@@ -178,7 +158,7 @@
             <img src="https://via.placeholder.com/150" alt="Vaca Jersey">
             <p>Precio: $1,000</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadJersey" value="0" min="0" max="10">
+            <input type="number" id="cantidadJersey" value="1" min="0" max="10">
             <button class="button" onclick="addToCart('Vaca Jersey', 1000, parseInt(document.getElementById('cantidadJersey').value))">Agregar al Carrito</button>
         </div>
         <!-- Producto: Vaca Pardo Suizo -->
@@ -187,51 +167,55 @@
             <img src="https://via.placeholder.com/150" alt="Vaca Pardo Suizo">
             <p>Precio: $1,300</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadPardo" value="0" min="0" max="10">
+            <input type="number" id="cantidadPardo" value="1" min="0" max="10">
             <button class="button" onclick="addToCart('Vaca Pardo Suizo', 1300, parseInt(document.getElementById('cantidadPardo').value))">Agregar al Carrito</button>
         </div>
         <!-- Producto: Vaca Angus -->
         <div class="product-card">
             <h3>Vaca Angus</h3>
             <img src="https://via.placeholder.com/150" alt="Vaca Angus">
-            <p>Precio: $1,500</p>
+            <p>Precio: $1,400</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadAngus" value="0" min="0" max="10">
-            <button class="button" onclick="addToCart('Vaca Angus', 1500, parseInt(document.getElementById('cantidadAngus').value))">Agregar al Carrito</button>
+            <input type="number" id="cantidadAngus" value="1" min="0" max="10">
+            <button class="button" onclick="addToCart('Vaca Angus', 1400, parseInt(document.getElementById('cantidadAngus').value))">Agregar al Carrito</button>
         </div>
         <!-- Producto: Vaca Hereford -->
         <div class="product-card">
             <h3>Vaca Hereford</h3>
             <img src="https://via.placeholder.com/150" alt="Vaca Hereford">
-            <p>Precio: $1,600</p>
+            <p>Precio: $1,250</p>
             <label>Cantidad:</label>
-            <input type="number" id="cantidadHereford" value="0" min="0" max="10">
-            <button class="button" onclick="addToCart('Vaca Hereford', 1600, parseInt(document.getElementById('cantidadHereford').value))">Agregar al Carrito</button>
+            <input type="number" id="cantidadHereford" value="1" min="0" max="10">
+            <button class="button" onclick="addToCart('Vaca Hereford', 1250, parseInt(document.getElementById('cantidadHereford').value))">Agregar al Carrito</button>
         </div>
     </div>
 
-    <h3>Carrito</h3>
+    <button class="button" onclick="goToCart()">Ver Carrito</button>
+</div>
+
+<!-- Página de Carrito -->
+<div id="cartPage" style="display: none;">
+    <h1>Carrito de Compras</h1>
     <table id="cartTable">
         <thead>
             <tr>
                 <th>Producto</th>
                 <th>Precio</th>
                 <th>Cantidad</th>
-                <th>Total</th>
-                <th>Acción</th>
+                <th>Acciones</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="cartBody"></tbody>
     </table>
-    <p id="totalAmount">Total: $0</p>
+    <div id="totalAmount"></div>
+    <button class="button" onclick="goToProducts()">Volver a Productos</button>
 </div>
 
 <script>
     let cart = [];
 
     function login() {
-        // Lógica de inicio de sesión
-        alert("Iniciar sesión (lógica no implementada)");
+        alert("Inicio de sesión exitoso.");
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("productPage").style.display = "block";
     }
@@ -247,56 +231,90 @@
     }
 
     function register() {
-        // Lógica de registro
-        alert("Registrar (lógica no implementada)");
+        alert("Registro exitoso.");
         document.getElementById("register").style.display = "none";
-        document.getElementById("productPage").style.display = "block";
+        document.getElementById("loginPage").style.display = "block";
     }
 
-    function addToCart(name, price, quantity) {
-        if (quantity <= 0 || isNaN(quantity)) {
-            alert("Cantidad no válida.");
+    function addToCart(product, price, quantity) {
+        if (quantity <= 0) {
+            alert("La cantidad debe ser al menos 1.");
             return;
         }
 
-        const existingItem = cart.find(item => item.name === name);
-        if (existingItem) {
-            existingItem.quantity += quantity;
+        const existingProduct = cart.find(item => item.product === product);
+        if (existingProduct) {
+            existingProduct.quantity += quantity;
+            alert(`${product} ha sido actualizado en el carrito.`);
         } else {
-            cart.push({ name, price, quantity });
+            cart.push({ product, price, quantity });
+            alert(`${product} ha sido agregado al carrito.`);
         }
 
-        updateCart();
-        document.getElementById('cantidad' + name.replace(' ', '')).value = 0; // Reiniciar cantidad a 0
+        // Reset quantity input to 0 after adding to cart
+        document.getElementById(`cantidad${product.replace(/\s/g, '')}`).value = 0; 
+        renderCart();
     }
 
-    function updateCart() {
-        const cartTable = document.getElementById("cartTable").querySelector("tbody");
-        cartTable.innerHTML = "";
+    function removeFromCart(product) {
+        cart = cart.filter(item => item.product !== product);
+        alert(`${product} ha sido eliminado del carrito.`);
+        renderCart();
+    }
+
+    function modifyQuantity(product) {
+        const newQuantity = prompt(`Modificar cantidad para ${product}. Ingrese la nueva cantidad:`);
+        const quantity = parseInt(newQuantity);
+        if (isNaN(quantity) || quantity < 0) {
+            alert("Cantidad no válida. Debe ser un número positivo.");
+            return;
+        }
+
+        const existingProduct = cart.find(item => item.product === product);
+        if (existingProduct) {
+            existingProduct.quantity = quantity;
+            alert(`${product} ha sido actualizado a ${quantity} en el carrito.`);
+        } else {
+            alert(`${product} no se encuentra en el carrito.`);
+        }
+
+        renderCart();
+    }
+
+    function renderCart() {
+        const cartBody = document.getElementById("cartBody");
+        cartBody.innerHTML = '';
         let total = 0;
 
         cart.forEach(item => {
-            const totalItem = item.price * item.quantity;
-            total += totalItem;
-            cartTable.innerHTML += `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>$${item.price}</td>
-                    <td>${item.quantity}</td>
-                    <td>$${totalItem}</td>
-                    <td><button class="button" onclick="removeFromCart('${item.name}')">Eliminar</button></td>
-                </tr>
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${item.product}</td>
+                <td>$${item.price}</td>
+                <td>${item.quantity}</td>
+                <td>
+                    <button class="button" onclick="removeFromCart('${item.product}')">Eliminar</button>
+                    <button class="button" onclick="modifyQuantity('${item.product}')">Modificar</button>
+                </td>
             `;
+            cartBody.appendChild(row);
+            total += item.price * item.quantity;
         });
 
         document.getElementById("totalAmount").innerText = `Total: $${total}`;
     }
 
-    function removeFromCart(name) {
-        cart = cart.filter(item => item.name !== name);
-        updateCart();
+    function goToCart() {
+        document.getElementById("productPage").style.display = "none";
+        document.getElementById("cartPage").style.display = "block";
+        renderCart();
+    }
+
+    function goToProducts() {
+        document.getElementById("cartPage").style.display = "none";
+        document.getElementById("productPage").style.display = "block";
     }
 </script>
-
 </body>
 </html>
+
