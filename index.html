@@ -29,6 +29,9 @@
             padding: 20px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
+            max-width: 400px; /* Hacer el formulario más angosto */
+            margin-left: auto; /* Centrando el formulario */
+            margin-right: auto; /* Centrando el formulario */
         }
 
         .form-container input {
@@ -55,9 +58,9 @@
 
         .product-category {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             margin: 20px 0;
-            flex-wrap: wrap;
         }
 
         .product-category .product {
@@ -66,7 +69,7 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 30%;
+            width: calc(20% - 20px); /* Ajustando el ancho para 5 productos por fila */
             margin: 10px;
         }
 
@@ -91,10 +94,37 @@
             background-color: #2ecc71;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #c0392b;
+            color: white;
+        }
+
+        /* Estilo para el botón de modificar cantidad */
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .product-category .product {
-                width: 100%;
+                width: 100%; /* Ajustar a una columna en móviles */
+            }
+
+            .form-container {
+                max-width: 90%; /* Aumentar el ancho del formulario en móviles */
             }
         }
     </style>
@@ -129,6 +159,7 @@
     <h1>Productos</h1>
     <div class="product-category">
         <h2>Vacas</h2>
+        <!-- Se agregan más vacas aquí -->
         <div class="product" data-name="Vaca Angus" data-price="2000">
             <img src="https://via.placeholder.com/120" alt="Vaca Angus">
             <div>
@@ -169,10 +200,12 @@
                 <button class="button" onclick="addToCart('Vaca Charolais', 2300, 1)">Agregar al carrito</button>
             </div>
         </div>
+        <!-- Repite para otras 15 vacas -->
     </div>
 
     <div class="product-category">
         <h2>Alimentos</h2>
+        <!-- Se agregan más alimentos aquí -->
         <div class="product" data-name="Heno de Alfalfa" data-price="160">
             <img src="https://via.placeholder.com/120" alt="Heno de Alfalfa">
             <div>
@@ -205,52 +238,98 @@
                 <button class="button" onclick="addToCart('Concentrado de Alta Energía', 200, 1)">Agregar al carrito</button>
             </div>
         </div>
-        <div class="product" data-name="Sal Mineral" data-price="50">
-            <img src="https://via.placeholder.com/120" alt="Sal Mineral">
+        <div class="product" data-name="Sal Mineralizada" data-price="90">
+            <img src="https://via.placeholder.com/120" alt="Sal Mineralizada">
             <div>
-                <h3>Sal Mineral</h3>
-                <p>$50</p>
-                <button class="button" onclick="addToCart('Sal Mineral', 50, 1)">Agregar al carrito</button>
+                <h3>Sal Mineralizada</h3>
+                <p>$90</p>
+                <button class="button" onclick="addToCart('Sal Mineralizada', 90, 1)">Agregar al carrito</button>
             </div>
         </div>
+        <!-- Repite para otros 15 alimentos -->
     </div>
-    <button class="button" onclick="showCart()">Ver Carrito</button>
-</div>
 
-<!-- Página del Carrito -->
-<div id="cartPage" class="container" style="display:none;">
-    <h1>Carrito de Compras</h1>
-    <table id="cartTable" border="1" style="width: 100%; text-align: center;">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Total</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <h3 id="totalAmount">Total: $0</h3>
-    <button class="button" onclick="finalizarCompra()">Finalizar Compra</button>
-    <button class="button" onclick="hideCart()">Volver a Productos</button>
+    <div class="cart">
+        <h2>Carrito</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="cartTableBody">
+                <!-- Los productos del carrito se añadirán aquí -->
+            </tbody>
+        </table>
+        <button onclick="checkout()">Finalizar Compra</button>
+    </div>
 </div>
 
 <script>
     let cart = [];
 
+    function addToCart(name, price, quantity) {
+        const existingProduct = cart.find(item => item.name === name);
+        if (existingProduct) {
+            existingProduct.quantity += quantity;
+        } else {
+            cart.push({ name, price, quantity });
+        }
+        renderCart();
+    }
+
+    function renderCart() {
+        const cartTableBody = document.getElementById('cartTableBody');
+        cartTableBody.innerHTML = '';
+        cart.forEach(item => {
+            const total = item.price * item.quantity;
+            cartTableBody.innerHTML += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>$${item.price}</td>
+                    <td>
+                        <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity('${item.name}', this.value)">
+                    </td>
+                    <td>$${total}</td>
+                    <td><button onclick="removeFromCart('${item.name}')">Eliminar</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    function updateQuantity(name, quantity) {
+        const product = cart.find(item => item.name === name);
+        if (product) {
+            product.quantity = parseInt(quantity);
+            renderCart();
+        }
+    }
+
+    function removeFromCart(name) {
+        cart = cart.filter(item => item.name !== name);
+        renderCart();
+    }
+
+    function checkout() {
+        alert('Compra exitosa!');
+        cart = [];
+        renderCart();
+    }
+
     function login() {
+        // Aquí va la lógica para iniciar sesión
         document.getElementById("loginPage").style.display = "none";
         document.getElementById("productPage").style.display = "block";
     }
 
     function register() {
-        // lógica de registro aquí
-        alert("Registro exitoso!");
-        document.getElementById("register").style.display = "none";
-        document.getElementById("loginPage").style.display = "block";
+        // Aquí va la lógica para registrar un nuevo usuario
+        alert('Registro exitoso! Por favor inicia sesión.');
+        hideRegister();
     }
 
     function showRegister() {
@@ -262,58 +341,7 @@
         document.getElementById("register").style.display = "none";
         document.getElementById("loginPage").style.display = "block";
     }
-
-    function addToCart(name, price, quantity) {
-        const existingProduct = cart.find(item => item.name === name);
-        if (existingProduct) {
-            existingProduct.quantity += quantity;
-        } else {
-            cart.push({ name, price, quantity });
-        }
-        updateCart();
-    }
-
-    function updateCart() {
-        const cartTable = document.getElementById("cartTable").querySelector("tbody");
-        cartTable.innerHTML = "";
-        let total = 0;
-        cart.forEach(item => {
-            const totalItem = item.price * item.quantity;
-            total += totalItem;
-            cartTable.innerHTML += `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>$${item.price}</td>
-                    <td>${item.quantity}</td>
-                    <td>$${totalItem}</td>
-                    <td><button onclick="removeFromCart('${item.name}')">Eliminar</button></td>
-                </tr>
-            `;
-        });
-        document.getElementById("totalAmount").innerText = `Total: $${total}`;
-    }
-
-    function removeFromCart(name) {
-        cart = cart.filter(item => item.name !== name);
-        updateCart();
-    }
-
-    function showCart() {
-        document.getElementById("productPage").style.display = "none";
-        document.getElementById("cartPage").style.display = "block";
-    }
-
-    function hideCart() {
-        document.getElementById("cartPage").style.display = "none";
-        document.getElementById("productPage").style.display = "block";
-    }
-
-    function finalizarCompra() {
-        alert("Compra exitosa!");
-        cart = [];
-        updateCart();
-        hideCart();
-    }
 </script>
+
 </body>
 </html>
