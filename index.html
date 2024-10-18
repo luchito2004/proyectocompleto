@@ -233,7 +233,7 @@
                     .then(response => response.text())
                     .then(data => {
                         if (data === 'Login exitoso') {
-                            window.location.href = '/main'; // Redirigir a la pantalla principal
+                            window.location.href = '/productos'; // Redirigir a la pantalla principal
                         } else {
                             document.getElementById('loginMessage').textContent = data;
                         }
