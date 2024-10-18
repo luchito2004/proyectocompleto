@@ -27,9 +27,6 @@
             border-radius: 10px;
         }
         .product {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin: 15px 0;
             padding: 10px;
             border: 1px solid #ccc;
@@ -46,13 +43,11 @@
         button:hover {
             background-color: #45a049;
         }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 15px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        #cart {
+            margin-top: 20px;
+        }
+        .total {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -60,95 +55,172 @@
     <h1>Granjas El Toro Lucho</h1>
     
     <div class="container">
-        <h2>Productos Disponibles</h2>
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="email" placeholder="Correo electrónico">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button onclick="login()">Iniciar Sesión</button>
+        <button onclick="showRegister()">Registrar</button>
+        
+        <div id="register" style="display:none;">
+            <h2>Registro</h2>
+            <input type="text" id="regEmail" placeholder="Correo electrónico">
+            <input type="password" id="regPassword" placeholder="Contraseña">
+            <button onclick="register()">Registrar</button>
+            <button onclick="hideRegister()">Cancelar</button>
+        </div>
+
+        <h2>Productos</h2>
         <div id="productList">
-            <div class="product">
-                <span>Alfalfa - $20</span>
-                <button onclick="addToCart('Alfalfa', 20)">Agregar al Carrito</button>
+            <div class="product" data-name="Alfalfa" data-price="180">
+                <h3>Alfalfa fresca</h3>
+                <p>$180 por kilo</p>
+                <button onclick="addToCart('Alfalfa', 180)">Agregar al carrito</button>
             </div>
-            <div class="product">
-                <span>Pasto - $15</span>
-                <button onclick="addToCart('Pasto', 15)">Agregar al Carrito</button>
+            <div class="product" data-name="Pasto" data-price="200">
+                <h3>Pasto seco</h3>
+                <p>$200 por kilo</p>
+                <button onclick="addToCart('Pasto', 200)">Agregar al carrito</button>
             </div>
-            <div class="product">
-                <span>Concentrado - $25</span>
-                <button onclick="addToCart('Concentrado', 25)">Agregar al Carrito</button>
+            <div class="product" data-name="Concentrado" data-price="250">
+                <h3>Concentrado para vacas</h3>
+                <p>$250 por kilo</p>
+                <button onclick="addToCart('Concentrado', 250)">Agregar al carrito</button>
             </div>
-            <div class="product">
-                <span>Suplemento - $30</span>
-                <button onclick="addToCart('Suplemento', 30)">Agregar al Carrito</button>
+            <div class="product" data-name="Suplemento Mineral" data-price="300">
+                <h3>Suplemento mineral</h3>
+                <p>$300 por kilo</p>
+                <button onclick="addToCart('Suplemento Mineral', 300)">Agregar al carrito</button>
             </div>
-            <div class="product">
-                <span>Sal - $10</span>
-                <button onclick="addToCart('Sal', 10)">Agregar al Carrito</button>
+            <div class="product" data-name="Sal Mineral" data-price="150">
+                <h3>Sal mineral</h3>
+                <p>$150 por kilo</p>
+                <button onclick="addToCart('Sal Mineral', 150)">Agregar al carrito</button>
             </div>
-            <div class="product">
-                <span>Paja - $5</span>
-                <button onclick="addToCart('Paja', 5)">Agregar al Carrito</button>
+            <div class="product" data-name="Paja" data-price="100">
+                <h3>Paja para cama</h3>
+                <p>$100 por kilo</p>
+                <button onclick="addToCart('Paja', 100)">Agregar al carrito</button>
+            </div>
+            <div class="product" data-name="Vaca Holstein" data-price="1200">
+                <h3>Vaca Holstein</h3>
+                <p>$1200</p>
+                <button onclick="addToCart('Vaca Holstein', 1200)">Agregar al carrito</button>
+            </div>
+            <div class="product" data-name="Vaca Angus" data-price="1500">
+                <h3>Vaca Angus</h3>
+                <p>$1500</p>
+                <button onclick="addToCart('Vaca Angus', 1500)">Agregar al carrito</button>
+            </div>
+            <div class="product" data-name="Vaca Jersey" data-price="1300">
+                <h3>Vaca Jersey</h3>
+                <p>$1300</p>
+                <button onclick="addToCart('Vaca Jersey', 1300)">Agregar al carrito</button>
+            </div>
+            <div class="product" data-name="Vaca Hereford" data-price="1400">
+                <h3>Vaca Hereford</h3>
+                <p>$1400</p>
+                <button onclick="addToCart('Vaca Hereford', 1400)">Agregar al carrito</button>
+            </div>
+            <div class="product" data-name="Vaca Pardo Suizo" data-price="1600">
+                <h3>Vaca Pardo Suizo</h3>
+                <p>$1600</p>
+                <button onclick="addToCart('Vaca Pardo Suizo', 1600)">Agregar al carrito</button>
+            </div>
+            <div class="product" data-name="Vaca Brangus" data-price="1550">
+                <h3>Vaca Brangus</h3>
+                <p>$1550</p>
+                <button onclick="addToCart('Vaca Brangus', 1550)">Agregar al carrito</button>
             </div>
         </div>
-        <button onclick="window.location.href='#'">Ver Carrito</button>
-    </div>
-
-    <div class="container" id="cartContainer" style="display: none;">
-        <h2>Carrito de Compras</h2>
-        <div id="cartList"></div>
-        <h3 id="totalPrice">Total: $0</h3>
-        <button onclick="confirmPurchase()">Finalizar Compra</button>
-        <button onclick="window.location.href='#'">Seguir Comprando</button>
+        
+        <div id="cart">
+            <h2>Carrito de Compras</h2>
+            <table id="cartTable">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los productos se agregarán aquí con JavaScript -->
+                </tbody>
+            </table>
+            <div class="total" id="totalPrice">Total: $0</div>
+            <button onclick="checkout()">Finalizar Compra</button>
+        </div>
     </div>
 
     <script>
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let total = 0;
 
-        function addToCart(name, price) {
-            cart.push({ name: name, price: price });
-            alert(name + ' ha sido agregado al carrito.');
-            localStorage.setItem('cart', JSON.stringify(cart));
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            // Aquí se realizaría una llamada al backend para verificar las credenciales
+            alert('Iniciado sesión como ' + email);
+            // Redirigir a la página principal o hacer otras acciones según la respuesta
         }
 
-        function updateCart() {
-            const cartList = document.getElementById('cartList');
-            cartList.innerHTML = '';
-            total = 0;
+        function register() {
+            const regEmail = document.getElementById('regEmail').value;
+            const regPassword = document.getElementById('regPassword').value;
+            // Aquí se realizaría una llamada al backend para registrar al usuario
+            alert('Usuario registrado: ' + regEmail);
+            hideRegister();
+        }
+
+        function showRegister() {
+            document.getElementById('register').style.display = 'block';
+        }
+
+        function hideRegister() {
+            document.getElementById('register').style.display = 'none';
+        }
+
+        function addToCart(product, price) {
+            cart.push({ product, price });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+            alert(product + " ha sido agregado al carrito.");
+        }
+
+        function renderCart() {
+            const cartTable = document.getElementById('cartTable').getElementsByTagName('tbody')[0];
+            cartTable.innerHTML = '';
+            let total = 0;
 
             cart.forEach((item, index) => {
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <span>${item.name} - $${item.price}</span>
-                    <button onclick="removeFromCart(${index})">Eliminar</button>
-                `;
-                cartList.appendChild(cartItem);
+                const row = cartTable.insertRow();
+                row.insertCell(0).innerText = item.product;
+                row.insertCell(1).innerText = '$' + item.price;
+                const actionsCell = row.insertCell(2);
+                const removeButton = document.createElement('button');
+                removeButton.innerText = 'Eliminar';
+                removeButton.onclick = () => removeFromCart(index);
+                actionsCell.appendChild(removeButton);
                 total += item.price;
             });
 
             document.getElementById('totalPrice').innerText = 'Total: $' + total;
-            document.getElementById('cartContainer').style.display = 'block';
         }
 
         function removeFromCart(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
-            updateCart();
+            renderCart();
         }
 
-        function confirmPurchase() {
-            if (cart.length === 0) {
-                alert('Tu carrito está vacío.');
-            } else {
-                alert('Compra exitosa. ¡Gracias por tu compra!');
-                localStorage.removeItem('cart'); // Clear the cart
-                cart = []; // Reset cart
-                updateCart(); // Update the cart display
-            }
+        function checkout() {
+            alert('Compra exitosa. Gracias por su compra!');
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
         }
 
-        // Check if there are items in the cart and update display
-        if (cart.length > 0) {
-            updateCart();
-        }
+        // Renderizar carrito al cargar la página
+        renderCart();
     </script>
 </body>
 </html>
