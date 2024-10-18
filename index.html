@@ -183,7 +183,6 @@
 
 <body>
     <h1>Granjas El Toro Lucho</h1>
-
     <div class="container" id="loginContainer">
         <h2>Iniciar Sesión</h2>
         <form id="loginForm">
@@ -193,7 +192,7 @@
             <input type="password" id="password" name="password" required>
             <button type="submit">Ingresar</button>
         </form>
-        <p id="loginMessage" class="error"></p>
+        <p id="loginMessage"></p>
         <button id="goRegister">¿No tienes cuenta? Regístrate</button>
     </div>
 
@@ -206,12 +205,11 @@
             <input type="password" id="regPassword" name="regPassword" required>
             <button type="submit">Crear Cuenta</button>
         </form>
-        <p id="registerMessage" class="error"></p>
+        <p id="registerMessage"></p>
         <button id="goLogin">¿Ya tienes cuenta? Inicia Sesión</button>
     </div>
 
     <script>
-        // Cambiar entre login y registro
         document.getElementById('goRegister').addEventListener('click', function () {
             document.getElementById('loginContainer').classList.add('hidden');
             document.getElementById('registerContainer').classList.remove('hidden');
@@ -233,18 +231,15 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             })
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(data => {
-                    if (data.success) {
-                        window.location.href = '/productos'; // Redirigir a la pantalla de productos
+                    if (data === 'Login exitoso') {
+                        window.location.href = '/main'; // Redirigir a la pantalla principal
                     } else {
-                        document.getElementById('loginMessage').textContent = data.message;
+                        document.getElementById('loginMessage').textContent = data;
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('loginMessage').textContent = 'Error en el servidor. Intente más tarde.';
-                });
+                .catch(error => console.error('Error:', error));
         });
 
         // Registro
@@ -258,25 +253,16 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             })
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(data => {
-                    document.getElementById('registerMessage').textContent = data.message;
-                    if (data.success) {
-                        document.getElementById('registerMessage').style.color = 'green';
-                    } else {
-                        document.getElementById('registerMessage').style.color = 'red';
-                    }
+                    document.getElementById('registerMessage').textContent = data;
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('registerMessage').textContent = 'Error en el servidor. Intente más tarde.';
-                });
+                .catch(error => console.error('Error:', error));
         });
     </script>
 </body>
 
 </html>
-
 
 <!-- Página de Productos -->
 <div id="productPage" style="display: none;">
