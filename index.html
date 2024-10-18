@@ -3,132 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Granjas El Toro Lucho - Ingreso</title>
+    <title>Granjas El Toro Lucho</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 0;
+            background-color: #f0f0f0;
             margin: 0;
-            background-image: url('toro-background.jpg');
-            background-size: cover;
-            background-position: center;
+            padding: 0;
         }
         h1 {
             text-align: center;
-            margin-top: 50px;
-            color: #fff;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            margin: 0;
         }
         .container {
-            max-width: 400px;
-            margin: 100px auto;
+            max-width: 800px;
+            margin: 20px auto;
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            border-radius: 10px;
         }
-        label, button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        input, button {
+        .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
             padding: 10px;
-            border-radius: 4px;
             border: 1px solid #ccc;
+            border-radius: 5px;
         }
         button {
-            background-color: #007bff;
-            color: #fff;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            padding: 10px 20px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
-        .hidden {
-            display: none;
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <h1>Granjas El Toro Lucho</h1>
-
-    <div class="container" id="loginContainer">
-        <h2>Iniciar Sesión</h2>
-        <form id="loginForm">
-            <label for="email">Correo Electrónico:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Ingresar</button>
-        </form>
-        <p id="loginMessage"></p>
-        <button id="goRegister">¿No tienes cuenta? Regístrate</button>
+    
+    <div class="container">
+        <h2>Productos Disponibles</h2>
+        <div id="productList">
+            <div class="product">
+                <span>Alfalfa - $20</span>
+                <button onclick="addToCart('Alfalfa', 20)">Agregar al Carrito</button>
+            </div>
+            <div class="product">
+                <span>Pasto - $15</span>
+                <button onclick="addToCart('Pasto', 15)">Agregar al Carrito</button>
+            </div>
+            <div class="product">
+                <span>Concentrado - $25</span>
+                <button onclick="addToCart('Concentrado', 25)">Agregar al Carrito</button>
+            </div>
+            <div class="product">
+                <span>Suplemento - $30</span>
+                <button onclick="addToCart('Suplemento', 30)">Agregar al Carrito</button>
+            </div>
+            <div class="product">
+                <span>Sal - $10</span>
+                <button onclick="addToCart('Sal', 10)">Agregar al Carrito</button>
+            </div>
+            <div class="product">
+                <span>Paja - $5</span>
+                <button onclick="addToCart('Paja', 5)">Agregar al Carrito</button>
+            </div>
+        </div>
+        <button onclick="window.location.href='#'">Ver Carrito</button>
     </div>
 
-    <div class="container hidden" id="registerContainer">
-        <h2>Registro</h2>
-        <form id="registerForm">
-            <label for="regEmail">Correo Electrónico:</label>
-            <input type="email" id="regEmail" name="regEmail" required>
-            <label for="regPassword">Contraseña:</label>
-            <input type="password" id="regPassword" name="regPassword" required>
-            <button type="submit">Crear Cuenta</button>
-        </form>
-        <p id="registerMessage"></p>
-        <button id="goLogin">¿Ya tienes cuenta? Inicia Sesión</button>
+    <div class="container" id="cartContainer" style="display: none;">
+        <h2>Carrito de Compras</h2>
+        <div id="cartList"></div>
+        <h3 id="totalPrice">Total: $0</h3>
+        <button onclick="confirmPurchase()">Finalizar Compra</button>
+        <button onclick="window.location.href='#'">Seguir Comprando</button>
     </div>
 
     <script>
-        document.getElementById('goRegister').addEventListener('click', function() {
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('registerContainer').classList.remove('hidden');
-        });
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let total = 0;
 
-        document.getElementById('goLogin').addEventListener('click', function() {
-            document.getElementById('registerContainer').classList.add('hidden');
-            document.getElementById('loginContainer').classList.remove('hidden');
-        });
+        function addToCart(name, price) {
+            cart.push({ name: name, price: price });
+            alert(name + ' ha sido agregado al carrito.');
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
 
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        function updateCart() {
+            const cartList = document.getElementById('cartList');
+            cartList.innerHTML = '';
+            total = 0;
 
-            fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.text())
-            .then(data => {
-                if (data === 'Login exitoso') {
-                    window.location.href = '/main'; // Redirigir a la pantalla principal
-                } else {
-                    document.getElementById('loginMessage').textContent = data;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span>${item.name} - $${item.price}</span>
+                    <button onclick="removeFromCart(${index})">Eliminar</button>
+                `;
+                cartList.appendChild(cartItem);
+                total += item.price;
+            });
 
-        // Registro
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
+            document.getElementById('totalPrice').innerText = 'Total: $' + total;
+            document.getElementById('cartContainer').style.display = 'block';
+        }
 
-            fetch('/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('registerMessage').textContent = data;
-            })
-            .catch(error => console.error('Error:', error));
-        });
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function confirmPurchase() {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío.');
+            } else {
+                alert('Compra exitosa. ¡Gracias por tu compra!');
+                localStorage.removeItem('cart'); // Clear the cart
+                cart = []; // Reset cart
+                updateCart(); // Update the cart display
+            }
+        }
+
+        // Check if there are items in the cart and update display
+        if (cart.length > 0) {
+            updateCart();
+        }
     </script>
 </body>
 </html>
