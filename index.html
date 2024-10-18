@@ -21,8 +21,8 @@
         }
 
         .container {
-            max-width: 450px;
-            margin: 100px auto;
+            max-width: 800px;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -113,6 +113,45 @@
             color: green;
             background-color: #e6ffe6;
         }
+
+        .product-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-quantity {
+            width: 80px;
+            margin-right: 10px;
+        }
+
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .back-button {
+            background-color: #dc3545;
+        }
+
+        .back-button:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 
@@ -150,19 +189,9 @@
     <!-- Productos -->
     <div class="container hidden" id="productosContainer">
         <h2>Productos para Vacas</h2>
-        <table id="productosTable">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Precio (CLP)</th>
-                    <th>Cantidad</th>
-                    <th>Agregar al Carrito</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí se cargarán los productos -->
-            </tbody>
-        </table>
+        <div id="productosList">
+            <!-- Aquí se cargarán los productos -->
+        </div>
         <button id="viewCart">Ver Carrito</button>
     </div>
 
@@ -198,7 +227,11 @@
                 <!-- Aquí se cargarán los productos del carrito -->
             </tbody>
         </table>
-        <button id="finalizePurchase">Finalizar Compra</button>
+        <div class="total" id="totalContainer">Total: 0 CLP</div>
+        <div class="button-container">
+            <button id="finalizePurchase">Finalizar Compra</button>
+            <button id="backToProducts" class="back-button">Volver a Productos</button>
+        </div>
         <p id="purchaseMessage" class="alert success"></p>
     </div>
 
@@ -257,31 +290,32 @@
                 { name: 'Alimento para Vacas', price: 8000 },
                 { name: 'Heno de Alfalfa', price: 5000 },
                 { name: 'Suplemento Mineral', price: 7000 },
-                { name: 'Alimento para Vacas Potenciado', price: 9000 },
-                { name: 'Fardo De Paja', price: 6000 },
-                { name: 'Heno De Pasto', price: 5500 },
-                { name: 'Leche', price: 1200 },
-                { name: 'Pastura Balanceada', price: 7000 },
-                { name: 'Sal Mineral', price: 4000 },
-                { name: 'Proteína Suplementaria', price: 7500 },
+                { name: 'Alimento para Vacas Potenciado', price: 10000 },
+                { name: 'Fardo De Paja', price: 3000 },
+                { name: 'Heno De Pasto', price: 4000 },
+                { name: 'Leche', price: 2000 },
             ];
-            const tbody = document.getElementById('productosTable').querySelector('tbody');
+            const productosList = document.getElementById('productosList');
             productos.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.price} CLP</td>
-                    <td><input type="number" min="1" value="1" class="product-quantity" data-name="${product.name}"></td>
-                    <td><button class="add-to-cart">Agregar</button></td>
+                const productRow = document.createElement('div');
+                productRow.classList.add('product-row');
+                productRow.innerHTML = `
+                    <div class="product-info">
+                        <strong>${product.name}</strong> - ${product.price} CLP
+                    </div>
+                    <div>
+                        <input type="number" min="1" value="1" class="product-quantity" data-name="${product.name}">
+                        <button class="add-to-cart">Agregar</button>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                productosList.appendChild(productRow);
             });
 
             // Manejar el clic en "Agregar al Carrito"
             const addToCartButtons = document.querySelectorAll('.add-to-cart');
             addToCartButtons.forEach(button => {
                 button.onclick = function () {
-                    const row = button.closest('tr');
+                    const row = button.closest('.product-row');
                     const productName = row.querySelector('.product-quantity').dataset.name;
                     const quantity = row.querySelector('.product-quantity').value;
                     addToCart(productName, quantity);
@@ -331,6 +365,7 @@
                 carrito.push({ name: productName, quantity: parseInt(quantity) });
             }
             alert(`${quantity} de ${productName} agregado al carrito.`);
+            updateTotal(); // Actualizar el total
         }
 
         // Mostrar carrito
@@ -366,6 +401,7 @@
                     } else {
                         carrito[index].quantity = newQuantity;
                     }
+                    updateTotal(); // Actualizar total cuando cambia la cantidad
                 };
             });
 
@@ -375,9 +411,28 @@
                 button.onclick = function () {
                     carrito.splice(index, 1);
                     displayCart(); // Actualizar la tabla del carrito
+                    updateTotal(); // Actualizar total después de eliminar
                 };
             });
+
+            updateTotal(); // Actualizar total al mostrar el carrito
         }
+
+        // Actualizar total de la compra
+        function updateTotal() {
+            let total = 0;
+            carrito.forEach(item => {
+                const productPrice = productos.find(p => p.name === item.name).price || cows.find(c => c.name === item.name).price;
+                total += productPrice * item.quantity;
+            });
+            document.getElementById('totalContainer').textContent = `Total: ${total} CLP`;
+        }
+
+        // Volver a la sección de productos
+        document.getElementById('backToProducts').onclick = function () {
+            document.getElementById('carritoContainer').classList.add('hidden');
+            document.getElementById('productosContainer').classList.remove('hidden');
+        };
 
         // Finalizar compra
         document.getElementById('finalizePurchase').onclick = function () {
@@ -385,6 +440,7 @@
                 document.getElementById('purchaseMessage').textContent = 'Compra exitosa. Gracias por su compra!';
                 carrito.length = 0; // Vaciar carrito
                 displayCart(); // Actualizar carrito
+                updateTotal(); // Actualizar total
             } else {
                 alert('El carrito está vacío.');
             }
