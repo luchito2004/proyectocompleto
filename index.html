@@ -6,202 +6,135 @@
     <title>Granjas El Toro Lucho</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-        header {
-            background-color: #FF5733;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            width: 100%;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
+
         .container {
             max-width: 1200px;
-            margin: 20px;
+            margin: 0 auto;
             padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: none;
         }
-        .active {
-            display: block;
-        }
-        h2 {
-            color: #333;
+
+        h1 {
             text-align: center;
+            color: #c0392b;
         }
-        .product, .cart-item {
-            background-color: #f8f8f8;
+
+        .form-container {
+            background: #fff;
             border-radius: 10px;
             padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
             margin: 10px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-        .product img, .cart-item img {
-            width: 120px;
-            border-radius: 10px;
-            margin-right: 20px;
-        }
-        .button {
-            background-color: #28A745;
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #c0392b;
             color: white;
             border: none;
-            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
-        .button:hover {
-            background-color: #218838;
+
+        .form-container button:hover {
+            background-color: #e74c3c;
         }
-        input[type="number"] {
-            width: 60px;
-            margin-left: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px;
-        }
-        #cartItems {
+
+        .product-category {
+            display: flex;
+            justify-content: space-between;
             margin: 20px 0;
+            flex-wrap: wrap;
         }
-        .total {
-            font-weight: bold;
-            font-size: 20px;
-            margin-top: 10px;
-            color: #333;
-        }
-        .form-container {
-            background-color: white;
-            padding: 30px;
+
+        .product-category .product {
+            background: #fff;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 30%;
+            margin: 10px;
         }
-        .form-container input {
-            width: calc(100% - 22px);
-            padding: 12px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
+
+        .product img {
+            max-width: 100%;
             border-radius: 5px;
         }
-        .btn-register {
-            background-color: #007BFF;
+
+        .button {
+            padding: 10px 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
         }
-        .btn-register:hover {
-            background-color: #0056b3;
+
+        .button:hover {
+            background-color: #2ecc71;
         }
-        .product-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-category .product {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Granjas El Toro Lucho</h1>
-</header>
-
-<!-- Página de Inicio -->
-<div id="loginPage" class="container active">
-    <h2>Iniciar Sesión</h2>
+<!-- Página de Inicio de Sesión -->
+<div id="loginPage" class="container">
+    <h1>Iniciar Sesión</h1>
     <div class="form-container">
-        <input type="email" id="email" placeholder="Correo" required>
-        <input type="password" id="password" placeholder="Contraseña" required>
-        <button class="button" onclick="login()">Iniciar Sesión</button>
-        <p>No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate aquí</a></p>
+        <input type="text" placeholder="Correo" required>
+        <input type="password" placeholder="Contraseña" required>
+        <button onclick="login()">Iniciar Sesión</button>
+        <p>¿No tienes una cuenta? <a href="#" onclick="showRegister()">Regístrate aquí</a></p>
     </div>
 </div>
 
-<!-- Formulario de Registro -->
-<div id="register" class="container">
-    <h2>Registro</h2>
+<!-- Página de Registro -->
+<div id="register" class="container" style="display:none;">
+    <h1>Registro</h1>
     <div class="form-container">
-        <input type="email" id="regEmail" placeholder="Correo" required>
-        <input type="password" id="regPassword" placeholder="Contraseña" required>
-        <button class="button btn-register" onclick="register()">Registrarse</button>
-        <button class="button" onclick="hideRegister()">Cancelar</button>
+        <input type="text" placeholder="Nombre" required>
+        <input type="email" placeholder="Correo" required>
+        <input type="password" placeholder="Contraseña" required>
+        <button onclick="register()">Registrar</button>
+        <p>¿Ya tienes cuenta? <a href="#" onclick="hideRegister()">Inicia sesión aquí</a></p>
     </div>
 </div>
 
 <!-- Página de Productos -->
-<div id="productPage" class="container">
-    <h2>Catálogo de Productos</h2>
-    <div id="productList" class="product-list">
-        <div class="product" data-name="Vaca Jersey" data-price="1600">
-            <img src="https://via.placeholder.com/120" alt="Vaca Jersey">
-            <div>
-                <h3>Vaca Jersey</h3>
-                <p>$1600</p>
-                <button class="button" onclick="addToCart('Vaca Jersey', 1600, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Vaca Charolaise" data-price="2000">
-            <img src="https://via.placeholder.com/120" alt="Vaca Charolaise">
-            <div>
-                <h3>Vaca Charolaise</h3>
-                <p>$2000</p>
-                <button class="button" onclick="addToCart('Vaca Charolaise', 2000, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Vaca Hereford" data-price="1700">
-            <img src="https://via.placeholder.com/120" alt="Vaca Hereford">
-            <div>
-                <h3>Vaca Hereford</h3>
-                <p>$1700</p>
-                <button class="button" onclick="addToCart('Vaca Hereford', 1700, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Vaca Angus" data-price="1800">
+<div id="productPage" class="container" style="display:none;">
+    <h1>Productos</h1>
+    <div class="product-category">
+        <h2>Vacas</h2>
+        <div class="product" data-name="Vaca Angus" data-price="2000">
             <img src="https://via.placeholder.com/120" alt="Vaca Angus">
             <div>
                 <h3>Vaca Angus</h3>
-                <p>$1800</p>
-                <button class="button" onclick="addToCart('Vaca Angus', 1800, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Alimento para Vacas" data-price="150">
-            <img src="https://via.placeholder.com/120" alt="Alimento para Vacas">
-            <div>
-                <h3>Alimento para Vacas</h3>
-                <p>$150</p>
-                <button class="button" onclick="addToCart('Alimento para Vacas', 150, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Suplemento Nutricional" data-price="80">
-            <img src="https://via.placeholder.com/120" alt="Suplemento Nutricional">
-            <div>
-                <h3>Suplemento Nutricional</h3>
-                <p>$80</p>
-                <button class="button" onclick="addToCart('Suplemento Nutricional', 80, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Pasto Fresco" data-price="120">
-            <img src="https://via.placeholder.com/120" alt="Pasto Fresco">
-            <div>
-                <h3>Pasto Fresco</h3>
-                <p>$120</p>
-                <button class="button" onclick="addToCart('Pasto Fresco', 120, 1)">Agregar al carrito</button>
-            </div>
-        </div>
-        <div class="product" data-name="Vaca Holstein" data-price="2100">
-            <img src="https://via.placeholder.com/120" alt="Vaca Holstein">
-            <div>
-                <h3>Vaca Holstein</h3>
-                <p>$2100</p>
-                <button class="button" onclick="addToCart('Vaca Holstein', 2100, 1)">Agregar al carrito</button>
+                <p>$2000</p>
+                <button class="button" onclick="addToCart('Vaca Angus', 2000, 1)">Agregar al carrito</button>
             </div>
         </div>
         <div class="product" data-name="Vaca Limousin" data-price="1900">
@@ -212,6 +145,34 @@
                 <button class="button" onclick="addToCart('Vaca Limousin', 1900, 1)">Agregar al carrito</button>
             </div>
         </div>
+        <div class="product" data-name="Vaca Holstein" data-price="2200">
+            <img src="https://via.placeholder.com/120" alt="Vaca Holstein">
+            <div>
+                <h3>Vaca Holstein</h3>
+                <p>$2200</p>
+                <button class="button" onclick="addToCart('Vaca Holstein', 2200, 1)">Agregar al carrito</button>
+            </div>
+        </div>
+        <div class="product" data-name="Vaca Jersey" data-price="2100">
+            <img src="https://via.placeholder.com/120" alt="Vaca Jersey">
+            <div>
+                <h3>Vaca Jersey</h3>
+                <p>$2100</p>
+                <button class="button" onclick="addToCart('Vaca Jersey', 2100, 1)">Agregar al carrito</button>
+            </div>
+        </div>
+        <div class="product" data-name="Vaca Charolais" data-price="2300">
+            <img src="https://via.placeholder.com/120" alt="Vaca Charolais">
+            <div>
+                <h3>Vaca Charolais</h3>
+                <p>$2300</p>
+                <button class="button" onclick="addToCart('Vaca Charolais', 2300, 1)">Agregar al carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-category">
+        <h2>Alimentos</h2>
         <div class="product" data-name="Heno de Alfalfa" data-price="160">
             <img src="https://via.placeholder.com/120" alt="Heno de Alfalfa">
             <div>
@@ -228,53 +189,78 @@
                 <button class="button" onclick="addToCart('Granos', 140, 1)">Agregar al carrito</button>
             </div>
         </div>
+        <div class="product" data-name="Suplemento de Minerales" data-price="180">
+            <img src="https://via.placeholder.com/120" alt="Suplemento de Minerales">
+            <div>
+                <h3>Suplemento de Minerales</h3>
+                <p>$180</p>
+                <button class="button" onclick="addToCart('Suplemento de Minerales', 180, 1)">Agregar al carrito</button>
+            </div>
+        </div>
+        <div class="product" data-name="Concentrado de Alta Energía" data-price="200">
+            <img src="https://via.placeholder.com/120" alt="Concentrado de Alta Energía">
+            <div>
+                <h3>Concentrado de Alta Energía</h3>
+                <p>$200</p>
+                <button class="button" onclick="addToCart('Concentrado de Alta Energía', 200, 1)">Agregar al carrito</button>
+            </div>
+        </div>
+        <div class="product" data-name="Sal Mineral" data-price="50">
+            <img src="https://via.placeholder.com/120" alt="Sal Mineral">
+            <div>
+                <h3>Sal Mineral</h3>
+                <p>$50</p>
+                <button class="button" onclick="addToCart('Sal Mineral', 50, 1)">Agregar al carrito</button>
+            </div>
+        </div>
     </div>
     <button class="button" onclick="showCart()">Ver Carrito</button>
 </div>
 
 <!-- Página del Carrito -->
-<div id="cartPage" class="container">
-    <h2>Carrito de Compras</h2>
-    <div id="cartItems"></div>
-    <div class="total">Total: $<span id="totalPrice">0</span></div>
-    <button class="button" onclick="checkout()">Finalizar Compra</button>
-    <button class="button" onclick="showProducts()">Volver a Productos</button>
+<div id="cartPage" class="container" style="display:none;">
+    <h1>Carrito de Compras</h1>
+    <table id="cartTable" border="1" style="width: 100%; text-align: center;">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <h3 id="totalAmount">Total: $0</h3>
+    <button class="button" onclick="finalizarCompra()">Finalizar Compra</button>
+    <button class="button" onclick="hideCart()">Volver a Productos</button>
 </div>
 
 <script>
     let cart = [];
 
     function login() {
-        // Simular login exitoso
-        document.getElementById('loginPage').classList.remove('active');
-        document.getElementById('productPage').classList.add('active');
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("productPage").style.display = "block";
     }
 
     function register() {
-        // Simular registro exitoso
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        hideRegister();
+        // lógica de registro aquí
+        alert("Registro exitoso!");
+        document.getElementById("register").style.display = "none";
+        document.getElementById("loginPage").style.display = "block";
     }
 
     function showRegister() {
-        document.getElementById('loginPage').classList.remove('active');
-        document.getElementById('register').classList.add('active');
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("register").style.display = "block";
     }
 
     function hideRegister() {
-        document.getElementById('register').classList.remove('active');
-        document.getElementById('loginPage').classList.add('active');
-    }
-
-    function showProducts() {
-        document.getElementById('productPage').classList.add('active');
-        document.getElementById('cartPage').classList.remove('active');
-    }
-
-    function showCart() {
-        document.getElementById('cartPage').classList.add('active');
-        document.getElementById('productPage').classList.remove('active');
-        updateCart();
+        document.getElementById("register").style.display = "none";
+        document.getElementById("loginPage").style.display = "block";
     }
 
     function addToCart(name, price, quantity) {
@@ -284,34 +270,27 @@
         } else {
             cart.push({ name, price, quantity });
         }
-        alert(`${name} agregado al carrito!`);
+        updateCart();
     }
 
     function updateCart() {
-        const cartItemsDiv = document.getElementById('cartItems');
-        cartItemsDiv.innerHTML = '';
-
+        const cartTable = document.getElementById("cartTable").querySelector("tbody");
+        cartTable.innerHTML = "";
         let total = 0;
         cart.forEach(item => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
-            cartItemsDiv.innerHTML += `
-                <div class="cart-item">
-                    <span>${item.name} - $${item.price} x ${item.quantity} = $${itemTotal}</span>
-                    <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity('${item.name}', this.value)">
-                    <button class="button" onclick="removeFromCart('${item.name}')">Eliminar</button>
-                </div>
+            const totalItem = item.price * item.quantity;
+            total += totalItem;
+            cartTable.innerHTML += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>$${item.price}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${totalItem}</td>
+                    <td><button onclick="removeFromCart('${item.name}')">Eliminar</button></td>
+                </tr>
             `;
         });
-        document.getElementById('totalPrice').textContent = total;
-    }
-
-    function updateQuantity(name, quantity) {
-        const item = cart.find(item => item.name === name);
-        if (item) {
-            item.quantity = parseInt(quantity);
-            updateCart();
-        }
+        document.getElementById("totalAmount").innerText = `Total: $${total}`;
     }
 
     function removeFromCart(name) {
@@ -319,13 +298,22 @@
         updateCart();
     }
 
-    function checkout() {
-        alert('Compra exitosa! Gracias por tu compra.');
+    function showCart() {
+        document.getElementById("productPage").style.display = "none";
+        document.getElementById("cartPage").style.display = "block";
+    }
+
+    function hideCart() {
+        document.getElementById("cartPage").style.display = "none";
+        document.getElementById("productPage").style.display = "block";
+    }
+
+    function finalizarCompra() {
+        alert("Compra exitosa!");
         cart = [];
         updateCart();
-        showProducts();
+        hideCart();
     }
 </script>
-
 </body>
 </html>
