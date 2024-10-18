@@ -61,9 +61,6 @@
             border: 1px solid #ddd;
             text-align: center;
         }
-        .hidden {
-            display: none;
-        }
         #message {
             margin-top: 10px;
             padding: 10px;
@@ -73,18 +70,20 @@
             border-radius: 5px;
             display: none;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Granjas El Toro Lucho</h1>
-    <button class="button" onclick="showPage('loginPage')">Login</button>
-    <button class="button" onclick="showPage('productPage')">Productos</button>
-    <button class="button" onclick="showPage('cartPage')">Carrito</button>
 </header>
 
 <div class="container">
+    <!-- Mensaje -->
+    <div id="message" class="hidden"></div>
 
     <!-- Página de Login -->
     <div id="loginPage">
@@ -92,16 +91,6 @@
         <input type="email" placeholder="Correo" required>
         <input type="password" placeholder="Contraseña" required>
         <button class="button" onclick="login()">Iniciar Sesión</button>
-        <button class="button" onclick="showRegister()">Registrarse</button>
-        
-        <div id="register" class="hidden">
-            <h2>Registrar Usuario</h2>
-            <input type="text" placeholder="Nombre" required>
-            <input type="email" placeholder="Correo" required>
-            <input type="password" placeholder="Contraseña" required>
-            <button class="button" onclick="register()">Registrar</button>
-            <button class="button" onclick="hideRegister()">Volver</button>
-        </div>
     </div>
 
     <!-- Página de Productos -->
@@ -185,9 +174,6 @@
             <button class="button" onclick="checkout()">Finalizar Compra</button>
         </div>
     </div>
-
-    <!-- Mensaje -->
-    <div id="message" class="hidden"></div>
 </div>
 
 <script>
@@ -261,22 +247,6 @@
             page.classList.add('hidden');
         });
         document.getElementById(pageId).classList.remove('hidden');
-    }
-
-    function showRegister() {
-        document.getElementById('register').classList.remove('hidden');
-    }
-
-    function hideRegister() {
-        document.getElementById('register').classList.add('hidden');
-    }
-
-    function login() {
-        alert('Iniciar sesión (Simulado)');
-    }
-
-    function register() {
-        alert('Registro (Simulado)');
     }
 
     // Inicializar mostrando la página de login
