@@ -99,26 +99,23 @@
 </head>
 <body>
 
-<!-- Página de Inicio de Sesión -->
-<div id="loginPage" class="login-container">
-    <h1>Iniciar Sesión</h1>
-    <input type="text" id="loginEmail" placeholder="Correo Electrónico" required><br>
-    <input type="password" id="loginPassword" placeholder="Contraseña" required><br>
-    <div id="loginError" class="error" style="display: none;"></div>
-    <button class="button" onclick="login()">Iniciar Sesión</button>
-    <button class="button" onclick="showRegister()">Registrar</button>
-</div>
-
-<!-- Página de Registro -->
-<div id="register" style="display: none;">
-    <h1>Registro</h1>
-    <input type="text" id="registerName" placeholder="Nombre" required><br>
-    <input type="text" id="registerEmail" placeholder="Correo Electrónico" required><br>
-    <input type="password" id="registerPassword" placeholder="Contraseña" required><br>
-    <div id="registerError" class="error" style="display: none;"></div>
-    <button class="button" onclick="register()">Registrar</button>
-    <button class="button" onclick="hideRegister()">Volver</button>
-</div>
+    <div id="loginPage">
+        <h1>Iniciar Sesión</h1>
+        <input type="text" placeholder="Correo Electrónico" required><br><br>
+        <input type="password" placeholder="Contraseña" required><br><br>
+        <button class="button" onclick="login()">Iniciar Sesión</button>
+        <button class="button" onclick="showRegister()">Registrar</button>
+    </div>
+    
+    <!-- Página de Registro -->
+    <div id="register" style="display: none;">
+        <h1>Registro</h1>
+        <input type="text" placeholder="Nombre" required><br><br>
+        <input type="text" placeholder="Correo Electrónico" required><br><br>
+        <input type="password" placeholder="Contraseña" required><br><br>
+        <button class="button" onclick="register()">Registrar</button>
+        <button class="button" onclick="hideRegister()">Volver</button>
+    </div>
 
 <!-- Página de Productos -->
 <div id="productPage" style="display: none;">
