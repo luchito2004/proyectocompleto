@@ -349,7 +349,8 @@
                 button.onclick = function () {
                     const row = button.closest('tr');
                     const cowName = row.querySelector('td').textContent;
-                    addToCart(cowName, 1); // Agregar una vaca al carrito
+                    const cowPrice = cows.find(c => c.name === cowName).price; // Obtener precio de la vaca
+                    addToCart(cowName, 1, cowPrice); // Agregar una vaca al carrito
                 };
             });
         }
@@ -357,12 +358,12 @@
         // Carrito de compras
         const carrito = [];
 
-        function addToCart(productName, quantity) {
+        function addToCart(productName, quantity, price) {
             const existingProduct = carrito.find(item => item.name === productName);
             if (existingProduct) {
                 existingProduct.quantity += parseInt(quantity);
             } else {
-                carrito.push({ name: productName, quantity: parseInt(quantity) });
+                carrito.push({ name: productName, quantity: parseInt(quantity), price });
             }
             alert(`${quantity} de ${productName} agregado al carrito.`);
             updateTotal(); // Actualizar el total
@@ -422,8 +423,7 @@
         function updateTotal() {
             let total = 0;
             carrito.forEach(item => {
-                const productPrice = productos.find(p => p.name === item.name).price || cows.find(c => c.name === item.name).price;
-                total += productPrice * item.quantity;
+                total += item.price * item.quantity;
             });
             document.getElementById('totalContainer').textContent = `Total: ${total} CLP`;
         }
