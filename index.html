@@ -154,7 +154,7 @@
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Precio</th>
+                    <th>Precio (CLP)</th>
                     <th>Cantidad</th>
                     <th>Agregar al Carrito</th>
                 </tr>
@@ -164,6 +164,23 @@
             </tbody>
         </table>
         <button id="viewCart">Ver Carrito</button>
+    </div>
+
+    <!-- Vacas en venta -->
+    <div class="container hidden" id="vacasContainer">
+        <h2>Vacas en Venta</h2>
+        <table id="vacasTable">
+            <thead>
+                <tr>
+                    <th>Vaca</th>
+                    <th>Precio (CLP)</th>
+                    <th>Agregar al Carrito</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se cargarán las vacas -->
+            </tbody>
+        </table>
     </div>
 
     <!-- Carrito -->
@@ -230,22 +247,30 @@
                 document.getElementById('loginContainer').classList.add('hidden');
                 document.getElementById('productosContainer').classList.remove('hidden');
                 loadProducts(); // Cargar productos al iniciar sesión
+                loadCows(); // Cargar vacas disponibles
             }
         };
 
         // Función para cargar productos (simulación)
         async function loadProducts() {
             const productos = [
-                { name: 'Alimento para Vacas', price: 10.0 },
-                { name: 'Heno de Alfalfa', price: 5.0 },
-                { name: 'Suplemento Mineral', price: 7.0 },
+                { name: 'Alimento para Vacas', price: 8000 },
+                { name: 'Heno de Alfalfa', price: 5000 },
+                { name: 'Suplemento Mineral', price: 7000 },
+                { name: 'Alimento para Vacas Potenciado', price: 9000 },
+                { name: 'Fardo De Paja', price: 6000 },
+                { name: 'Heno De Pasto', price: 5500 },
+                { name: 'Leche', price: 1200 },
+                { name: 'Pastura Balanceada', price: 7000 },
+                { name: 'Sal Mineral', price: 4000 },
+                { name: 'Proteína Suplementaria', price: 7500 },
             ];
             const tbody = document.getElementById('productosTable').querySelector('tbody');
             productos.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${product.name}</td>
-                    <td>${product.price} $</td>
+                    <td>${product.price} CLP</td>
                     <td><input type="number" min="1" value="1" class="product-quantity" data-name="${product.name}"></td>
                     <td><button class="add-to-cart">Agregar</button></td>
                 `;
@@ -260,6 +285,37 @@
                     const productName = row.querySelector('.product-quantity').dataset.name;
                     const quantity = row.querySelector('.product-quantity').value;
                     addToCart(productName, quantity);
+                };
+            });
+        }
+
+        // Función para cargar vacas (simulación)
+        async function loadCows() {
+            const cows = [
+                { name: 'Vaca Holstein', price: 3000000 },
+                { name: 'Vaca Jersey', price: 2800000 },
+                { name: 'Vaca Angus', price: 3200000 },
+                { name: 'Vaca Hereford', price: 3100000 },
+                { name: 'Vaca Limousin', price: 3500000 },
+            ];
+            const tbody = document.getElementById('vacasTable').querySelector('tbody');
+            cows.forEach(cow => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cow.name}</td>
+                    <td>${cow.price} CLP</td>
+                    <td><button class="add-cow-to-cart">Agregar</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Manejar el clic en "Agregar Vaca al Carrito"
+            const addCowToCartButtons = document.querySelectorAll('.add-cow-to-cart');
+            addCowToCartButtons.forEach(button => {
+                button.onclick = function () {
+                    const row = button.closest('tr');
+                    const cowName = row.querySelector('td').textContent;
+                    addToCart(cowName, 1); // Agregar una vaca al carrito
                 };
             });
         }
@@ -280,6 +336,7 @@
         // Mostrar carrito
         document.getElementById('viewCart').onclick = function () {
             document.getElementById('productosContainer').classList.add('hidden');
+            document.getElementById('vacasContainer').classList.add('hidden');
             document.getElementById('carritoContainer').classList.remove('hidden');
             displayCart();
         };
@@ -287,14 +344,29 @@
         function displayCart() {
             const tbody = document.getElementById('carritoTable').querySelector('tbody');
             tbody.innerHTML = ''; // Limpiar tabla antes de mostrar
-            carrito.forEach(item => {
+            carrito.forEach((item, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${item.name}</td>
-                    <td>${item.quantity}</td>
+                    <td><input type="number" value="${item.quantity}" min="1" class="cart-quantity" data-index="${index}"></td>
                     <td><button class="remove-from-cart">Eliminar</button></td>
                 `;
                 tbody.appendChild(row);
+            });
+
+            // Manejar el cambio de cantidad
+            const cartQuantityInputs = document.querySelectorAll('.cart-quantity');
+            cartQuantityInputs.forEach(input => {
+                input.onchange = function () {
+                    const index = input.dataset.index;
+                    const newQuantity = parseInt(input.value);
+                    if (newQuantity < 1) {
+                        alert('La cantidad debe ser al menos 1.');
+                        input.value = carrito[index].quantity; // Restaurar la cantidad anterior
+                    } else {
+                        carrito[index].quantity = newQuantity;
+                    }
+                };
             });
 
             // Manejar el clic en "Eliminar"
